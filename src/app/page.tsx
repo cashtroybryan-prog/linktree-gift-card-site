@@ -4598,6 +4598,616 @@ export default function Home() {
             transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 4)));
           }
         }
+                  /* MOBILE RESPONSIVE FIX */
+
+        @media (max-width: 768px) {
+          html,
+          body {
+            width: 100%;
+            overflow-x: hidden;
+          }
+
+          .main-shell {
+            width: 100%;
+            overflow-x: hidden;
+          }
+
+          .page-content {
+            width: 100%;
+          }
+
+          img {
+            max-width: 100%;
+          }
+
+          .linktree-nav-shell {
+            left: 12px;
+            right: 12px;
+            top: 12px;
+            width: auto;
+            height: 62px;
+            transform: none !important;
+          }
+
+          .linktree-nav-shell.nav-hidden {
+            transform: translateY(-130%) !important;
+          }
+
+          .linktree-nav {
+            width: 100%;
+            height: 62px;
+            border-radius: 999px;
+          }
+
+          .linktree-logo-link {
+            left: 18px;
+            top: 12px;
+            width: 86px;
+            height: 38px;
+          }
+
+          .linktree-logo {
+            width: 86px;
+            height: 38px;
+          }
+
+          .linktree-nav-item,
+          .login-button {
+            display: none;
+          }
+
+          .signup-button {
+            left: auto;
+            right: 12px;
+            top: 10px;
+            width: 112px;
+            height: 42px;
+            border-radius: 999px;
+            font-size: 12px;
+          }
+
+          .country-area {
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            top: 82px;
+            width: auto;
+            height: 44px;
+            z-index: 998;
+          }
+
+          .country-pill {
+            width: 100%;
+            height: 44px;
+            font-size: 12px;
+            padding: 0 16px;
+          }
+
+          .country-menu {
+            width: 100%;
+            top: 52px;
+          }
+
+          .country-change-toast {
+            top: 14px;
+            width: calc(100vw - 24px);
+            min-width: 0;
+            height: 44px;
+            font-size: 13px;
+          }
+
+          .carousel-window {
+            display: none;
+          }
+
+          .hero-bg {
+            width: 100% !important;
+            height: 100% !important;
+            left: 0 !important;
+            top: 0 !important;
+            object-fit: cover;
+            object-position: center;
+          }
+
+          .start-browsing-button {
+            left: 50%;
+            top: 68%;
+            width: 52%;
+            height: 54px;
+            transform: translateX(-50%);
+          }
+
+          .word-window {
+            width: 90vw;
+            height: 52px;
+          }
+
+          .word-image {
+            width: 86vw;
+            height: 42px;
+          }
+
+          .gift-card-row img {
+            height: 118px !important;
+            width: 190px !important;
+            border-radius: 16px !important;
+          }
+
+          .blue-start-gifting-button {
+            left: 50%;
+            top: 64%;
+            width: 54%;
+            height: 54px;
+            transform: translateX(-50%);
+          }
+
+          .claim-linktree-button {
+            left: 50%;
+            top: 61%;
+            width: 50%;
+            height: 50px;
+            transform: translateX(-50%);
+          }
+
+          .gift-browser-page {
+            display: block;
+            padding: 150px 16px 70px;
+            min-height: 100vh;
+          }
+
+          .gift-browser-frame {
+            position: relative;
+            width: 100%;
+            min-height: auto;
+            transform: none !important;
+            background: transparent;
+          }
+
+          .hero-image-wrap {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            height: auto;
+          }
+
+          .hero-image {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            height: auto;
+            transform: none;
+          }
+
+          .search-control,
+          .category-filter,
+          .featured-filter,
+          .browser-title,
+          .browser-subtitle,
+          .browser-no-results,
+          .browser-card-grid {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+          }
+
+          .search-control {
+            height: 56px;
+            margin-top: 24px;
+            border-radius: 999px;
+          }
+
+          .search-icon-image {
+            left: 14px;
+            top: 8px;
+            width: 40px;
+            height: 40px;
+          }
+
+          .search-input {
+            left: 64px;
+            width: calc(100% - 88px);
+            height: 56px;
+            font-size: 16px;
+          }
+
+          .search-input::placeholder {
+            font-size: 16px;
+          }
+
+          .category-filter,
+          .featured-filter {
+            margin-top: 12px;
+          }
+
+          .category-control,
+          .featured-control {
+            height: 54px;
+            border-radius: 999px;
+            font-size: 16px;
+          }
+
+          .category-control span,
+          .featured-control span {
+            left: 22px;
+            top: 17px;
+            width: calc(100% - 70px);
+          }
+
+          .category-arrow,
+          .featured-arrow {
+            left: auto;
+            right: 22px;
+            top: 18px;
+            width: 24px;
+            height: 18px;
+          }
+
+          .category-menu,
+          .featured-menu {
+            top: 64px;
+            border-radius: 22px;
+          }
+
+          .browser-title {
+            margin-top: 34px;
+            font-size: 32px;
+            line-height: 1;
+          }
+
+          .browser-subtitle {
+            margin-top: 12px;
+            font-size: 17px;
+            line-height: 1.25;
+          }
+
+          .browser-card-grid {
+            margin-top: 34px;
+            grid-template-columns: 1fr;
+            gap: 22px;
+          }
+
+          .gift-card-tile {
+            height: 300px;
+            border-radius: 24px;
+          }
+
+          .gift-card-image-wrap {
+            height: 198px;
+            border-radius: 24px 24px 0 0;
+          }
+
+          .gift-card-title {
+            left: 22px;
+            top: 218px;
+            width: calc(100% - 44px);
+            font-size: 20px;
+          }
+
+          .gift-card-range {
+            left: 22px;
+            top: 252px;
+            width: calc(100% - 44px);
+            font-size: 17px;
+          }
+
+          .linktree-smart-page,
+          .recipient-page,
+          .personalize-page {
+            display: block;
+            min-height: 100vh;
+            padding: 26px 16px 70px;
+          }
+
+          .linktree-smart-frame,
+          .recipient-frame,
+          .personalize-frame {
+            position: relative;
+            width: 100%;
+            height: auto;
+            min-height: auto;
+            transform: none !important;
+            background: transparent;
+          }
+
+          .linktree-smart-frame.has-continue {
+            height: auto;
+            padding-bottom: 100px;
+          }
+
+          .linktree-back-button,
+          .recipient-back-button,
+          .personalize-back-button {
+            position: relative;
+            left: auto;
+            top: auto;
+            display: inline-flex;
+            margin-bottom: 24px;
+            font-size: 16px;
+          }
+
+          .product-info-column,
+          .product-info-value,
+          .recipient-left,
+          .recipient-right {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+          }
+
+          .product-info-image-wrap {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 5 / 3;
+            border-radius: 26px;
+          }
+
+          .product-info-title,
+          .product-info-copy,
+          .product-info-link,
+          .product-info-expiry {
+            width: 100%;
+          }
+
+          .product-info-title {
+            margin-top: 26px;
+            font-size: 34px;
+            line-height: 0.98;
+          }
+
+          .product-info-copy {
+            margin-top: 18px;
+            font-size: 18px;
+            line-height: 1.15;
+          }
+
+          .product-info-link {
+            margin-top: 24px;
+            font-size: 17px;
+          }
+
+          .product-info-expiry {
+            margin-top: 28px;
+            font-size: 26px;
+          }
+
+          .linktree-purchase-heading {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            min-height: auto;
+            margin-top: 44px;
+            font-size: 34px;
+            line-height: 1;
+          }
+
+          .linktree-amount-panel {
+            display: none;
+          }
+
+          .linktree-amount-button {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            width: calc(50% - 8px) !important;
+            height: 56px !important;
+            margin: 7px 4px;
+            display: inline-flex;
+            vertical-align: top;
+            border-radius: 999px;
+            font-size: 17px;
+          }
+
+          .linktree-continue-button {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            height: 62px;
+            margin-top: 24px;
+            font-size: 24px;
+          }
+
+          .recipient-close-button,
+          .personalize-close-button {
+            right: 0;
+            top: 0;
+            width: 44px;
+            height: 44px;
+            font-size: 30px;
+          }
+
+          .recipient-right {
+            margin-top: 44px;
+          }
+
+          .recipient-value-row,
+          .recipient-divider,
+          .recipient-toggle,
+          .creator-card,
+          .myself-card,
+          .recipient-form-card,
+          .recipient-final-button {
+            width: 100%;
+          }
+
+          .recipient-value-row {
+            height: auto;
+          }
+
+          .recipient-value-row h2 {
+            font-size: 24px;
+          }
+
+          .recipient-value-pill {
+            min-width: 104px;
+            height: 50px;
+            font-size: 25px;
+          }
+
+          .recipient-question {
+            margin: 30px 0 18px;
+            font-size: 38px;
+            line-height: 1;
+          }
+
+          .recipient-toggle {
+            height: auto;
+            border-radius: 28px;
+            grid-template-columns: 1fr;
+          }
+
+          .recipient-toggle button {
+            height: 48px;
+            font-size: 16px;
+          }
+
+          .creator-picker {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            margin-top: 22px;
+            padding: 20px;
+            border-radius: 24px;
+          }
+
+          .creator-picker-header button {
+            display: none !important;
+          }
+
+          .creator-list-item {
+            grid-template-columns: 52px 1fr auto;
+            gap: 12px;
+            padding: 12px;
+          }
+
+          .creator-list-avatar {
+            width: 52px;
+            height: 52px;
+          }
+
+          .creator-list-copy div {
+            font-size: 18px;
+          }
+
+          .creator-list-copy p {
+            font-size: 13px;
+          }
+
+          .creator-list-item span {
+            font-size: 12px;
+            padding: 8px 10px;
+          }
+
+          .recipient-form-card {
+            padding: 20px;
+          }
+
+          .recipient-form-card input {
+            height: 58px;
+            font-size: 20px;
+          }
+
+          .recipient-final-button {
+            height: 62px;
+            font-size: 24px;
+          }
+
+          .personalize-card {
+            width: 100%;
+            margin: 0 0 40px;
+            padding: 28px 20px;
+          }
+
+          .personalize-card h1 {
+            font-size: 36px;
+          }
+
+          .personalize-subtitle {
+            margin: 18px 0 32px;
+            font-size: 20px;
+          }
+
+          .personalize-tabs {
+            overflow-x: auto;
+          }
+
+          .personalize-tabs button {
+            height: 50px;
+            font-size: 16px;
+            white-space: nowrap;
+          }
+
+          .media-card-grid,
+          .gif-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .checkout-header {
+            height: 78px;
+          }
+
+          .checkout-logo-image {
+            height: 42px;
+          }
+
+          .checkout-back-button {
+            left: 16px;
+            font-size: 15px;
+          }
+
+          .checkout-close-button {
+            right: 16px;
+            width: 42px;
+            height: 42px;
+            font-size: 30px;
+          }
+
+          .checkout-frame {
+            width: 100%;
+            min-height: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            transform: none !important;
+          }
+
+          .checkout-form-side,
+          .checkout-summary-side {
+            padding: 24px 16px;
+          }
+
+          .checkout-summary-side {
+            border-left: 0;
+            border-bottom: 1px solid #dededb;
+          }
+
+          .checkout-summary-card {
+            position: relative;
+            top: auto;
+          }
+
+          .express-buttons,
+          .payment-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .checkout-product-row {
+            grid-template-columns: 92px 1fr auto;
+            gap: 12px;
+          }
+
+          .checkout-product-thumb {
+            width: 88px;
+            height: 56px;
+          }
+        }
+
+        /* END MOBILE RESPONSIVE FIX */
       `}</style>
     </main>
   );

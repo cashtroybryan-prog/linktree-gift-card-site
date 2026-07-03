@@ -5208,6 +5208,47 @@ export default function Home() {
         }
 
         /* END MOBILE RESPONSIVE FIX */
+                /* MOBILE HERO FIX */
+
+        @media (max-width: 768px) {
+          .main-shell {
+            background: #cbea19 !important;
+          }
+
+          section.relative.h-screen.w-full.overflow-hidden.bg-$begin:math:display$\\\#cbea19$end:math:display$ {
+            height: 100vh !important;
+            min-height: 760px;
+            background: #cbea19 !important;
+          }
+
+          .hero-bg {
+            width: 100% !important;
+            height: auto !important;
+            left: 0 !important;
+            top: 150px !important;
+            object-fit: contain !important;
+            object-position: top center !important;
+            max-width: none !important;
+          }
+
+          .start-browsing-button {
+            left: 50% !important;
+            top: 64% !important;
+            width: 60% !important;
+            height: 54px !important;
+            transform: translateX(-50%) !important;
+          }
+
+          .country-area {
+            top: 94px !important;
+          }
+
+          .linktree-nav-shell {
+            top: 18px !important;
+          }
+        }
+
+        /* END MOBILE HERO FIX */
       `}</style>
     </main>
   );

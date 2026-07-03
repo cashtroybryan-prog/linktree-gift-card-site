@@ -1561,14 +1561,6 @@ export default function Home() {
                               <h4>Choose a Linktree creator</h4>
                               <p>Select who this eGift Card is for.</p>
                             </div>
-
-                            <button
-                              type="button"
-                              onClick={() => setCreatorPickerOpen(false)}
-                              aria-label="Close creator picker"
-                            >
-                              ×
-                            </button>
                           </div>
 
                           <div className="creator-list">

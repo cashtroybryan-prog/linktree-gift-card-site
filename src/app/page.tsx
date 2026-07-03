@@ -2285,22 +2285,22 @@ export default function Home() {
         }
 
         .shop-link {
-          left: 168px;
+          left: 155px;
           width: 154px;
         }
 
         .how-link {
-          left: 326px;
+          left: 310px;
           width: 136px;
         }
 
         .tracker-link {
-          left: 466px;
+          left: 448px;
           width: 128px;
         }
 
         .help-link {
-          left: 598px;
+          left: 582px;
           width: 62px;
         }
 

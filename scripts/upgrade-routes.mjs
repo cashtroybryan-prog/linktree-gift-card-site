@@ -51,31 +51,14 @@ const countryPersonalizePagePath = path.join(
 const countryCheckoutPagePath = path.join(countryCheckoutDir, "page.tsx");
 
 /**
- * IMPORTANT:
- * Do NOT use the existing GiftSite.tsx as the source.
- * Earlier attempts created an old GiftSite.tsx, so reading from it makes it look
- * like nothing changed.
- *
- * This script reads from src/app/page.tsx when it still has your original code.
- * If src/app/page.tsx has already been turned into a redirect, it reads from
- * src/app/page-old.tsx instead.
+ * Previous working source logic.
+ * If GiftSite.tsx exists, use that as the source.
+ * Otherwise use src/app/page.tsx.
  */
-let sourcePath = appPagePath;
-
-if (fs.existsSync(appPagePath)) {
-  const appPageCode = fs.readFileSync(appPagePath, "utf8");
-
-  const appPageLooksLikeRedirect =
-    appPageCode.includes(`redirect("/home")`) ||
-    appPageCode.includes(`redirect('/home')`);
-
-  if (appPageLooksLikeRedirect && fs.existsSync(oldPagePath)) {
-    sourcePath = oldPagePath;
-  }
-}
+const sourcePath = fs.existsSync(giftSitePath) ? giftSitePath : appPagePath;
 
 if (!fs.existsSync(sourcePath)) {
-  console.error("Could not find src/app/page.tsx or src/app/page-old.tsx");
+  console.error("Could not find src/components/GiftSite.tsx or src/app/page.tsx");
   process.exit(1);
 }
 
@@ -97,8 +80,8 @@ if (!fs.existsSync(sourcePath)) {
 
 let code = fs.readFileSync(sourcePath, "utf8");
 
-if (!fs.existsSync(oldPagePath) && sourcePath === appPagePath) {
-  fs.writeFileSync(oldPagePath, code);
+if (fs.existsSync(appPagePath) && !fs.existsSync(oldPagePath)) {
+  fs.writeFileSync(oldPagePath, fs.readFileSync(appPagePath, "utf8"));
 }
 
 /**
@@ -193,7 +176,7 @@ const fullFunctionOpening = `export default function GiftSite({
 
     const timeout = window.setTimeout(() => {
       document.documentElement.classList.remove("route-entering");
-    }, 260);
+    }, 620);
 
     return () => {
       window.cancelAnimationFrame(frame);
@@ -335,12 +318,6 @@ code = code.replace(
 
 /**
  * Existing green country pill after route render.
- * Simple forced version:
- * - country click saves pending country
- * - route changes
- * - new route mounts
- * - waits 420ms
- * - triggers the original green pill
  */
 code = code.replace(
   `const [countryToastVisible, setCountryToastVisible] = useState(false);`,
@@ -362,7 +339,7 @@ code = code.replace(
 
     const showTimer = window.setTimeout(() => {
       triggerCountryToast();
-    }, 420);
+    }, 640);
 
     return () => {
       window.clearTimeout(showTimer);
@@ -555,7 +532,6 @@ code = code.replace(
 
 /**
  * Country change.
- * Stores pending pill, routes to new country, then new route triggers original green pill.
  */
 code = code.replace(
   /const handleCountryChange = \(country: Country\) => \{[\s\S]*?\n  \};/,
@@ -651,7 +627,7 @@ code = code.replace(
 
 /**
  * CSS.
- * Keeps your original green pill design, only ensures it sits above animated content.
+ * This includes the slower smoother animation.
  */
 const animationCss = `
         /* COUNTRY GREEN PILL VISIBILITY FIX */
@@ -673,7 +649,7 @@ const animationCss = `
         /* SMOOTH ROUTE ANIMATION */
 
         .route-entering .page-content {
-          animation: routePageEnter 240ms ease-out both;
+          animation: routePageEnter 580ms cubic-bezier(0.22, 1, 0.36, 1) both;
           will-change: opacity, transform;
         }
 
@@ -682,30 +658,31 @@ const animationCss = `
         .route-entering .recipient-page,
         .route-entering .linktree-smart-page,
         .route-entering .gift-browser-page {
-          animation: routePanelEnter 240ms ease-out both;
+          animation: routePanelEnter 580ms cubic-bezier(0.22, 1, 0.36, 1) both;
+          will-change: opacity, transform;
         }
 
         @keyframes routePageEnter {
           0% {
             opacity: 0;
-            transform: translateY(4px);
+            transform: translateY(20px) scale(0.992);
           }
 
           100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
         }
 
         @keyframes routePanelEnter {
           0% {
             opacity: 0;
-            transform: translateY(5px);
+            transform: translateY(24px) scale(0.992);
           }
 
           100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
         }
 
@@ -1264,6 +1241,7 @@ console.log("- /[country]/product/[id]");
 console.log("- /[country]/product/[id]/recipient");
 console.log("- /[country]/product/[id]/personalize/[type]");
 console.log("- /[country]/product/[id]/checkout");
+console.log("- smoother route animation baked in");
 console.log("- existing green country pill after route render");
 console.log("");
 console.log("Now run:");

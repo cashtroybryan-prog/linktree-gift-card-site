@@ -414,29 +414,6 @@ export default function GiftSite({
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry);
   const [countryToastVisible, setCountryToastVisible] = useState(false);
 
-  useEffect(() => {
-    const pendingCountryCode = window.sessionStorage.getItem(
-      "giftCountryPillPending"
-    );
-
-    if (!pendingCountryCode) return;
-
-    const isCurrentCountry =
-      pendingCountryCode.toLowerCase() === selectedCountry.code.toLowerCase();
-
-    if (!isCurrentCountry) return;
-
-    window.sessionStorage.removeItem("giftCountryPillPending");
-
-    const showTimer = window.setTimeout(() => {
-      triggerCountryToast();
-    }, 420);
-
-    return () => {
-      window.clearTimeout(showTimer);
-    };
-  }, [pathname, selectedCountry.code]);
-
   const [selectedAmount, setSelectedAmount] = useState<number | null>(
     initialAmount
   );
@@ -818,17 +795,25 @@ export default function GiftSite({
     resetCheckout();
   };
 
-  const triggerCountryToast = () => {
-    if (countryToastTimerRef.current) {
-      window.clearTimeout(countryToastTimerRef.current);
-    }
+const triggerCountryToast = (country: Country = selectedCountry) => {
+  if (countryToastTimerRef.current) {
+    window.clearTimeout(countryToastTimerRef.current);
+  }
 
-    setCountryToastVisible(true);
+  setCountryToastVisible(false);
 
-    countryToastTimerRef.current = window.setTimeout(() => {
-      setCountryToastVisible(false);
-    }, 1600);
-  };
+  const existingToast = document.querySelector(".country-change-toast");
+  existingToast?.remove();
+
+  const toast = document.createElement("div");
+  toast.className = "country-change-toast";
+  toast.textContent = `Updated to ${country.label} ${country.flag}`;
+  document.body.appendChild(toast);
+
+  countryToastTimerRef.current = window.setTimeout(() => {
+    toast.remove();
+  }, 1600);
+};
 
   const transitionToPage = (page: ActivePage) => {
     setNavHidden(false);
@@ -890,13 +875,17 @@ export default function GiftSite({
     });
   };
 
-  const handleCountryChange = (country: Country) => {
-    window.sessionStorage.setItem("giftCountryPillPending", country.code);
-    setSelectedCountry(country);
-    setCountryOpen(false);
-    setRecipientPhone("");
-    navigateTo(getCountryPath(country));
-  };
+const handleCountryChange = (country: Country) => {
+  const nextPath = getCountryPath(country);
+
+  setCountryOpen(false);
+  setRecipientPhone("");
+  navigateTo(nextPath);
+
+  window.setTimeout(() => {
+    triggerCountryToast(country);
+  }, 200);
+};
 
   const handleValueContinue = () => {
     if (!selectedAmount) return;
@@ -984,11 +973,7 @@ export default function GiftSite({
         backgroundPage === "home" ? "bg-[#cbea19]" : "bg-[#f3f3f1]"
       }`}
     >
-      {countryToastVisible && (
-        <div className="country-change-toast">
-          Updated to {selectedCountry.label} {selectedCountry.flag}
-        </div>
-      )}
+
 
       {activePage !== "product" && (
         <header

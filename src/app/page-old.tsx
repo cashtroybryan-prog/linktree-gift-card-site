@@ -4541,15 +4541,27 @@ export default function Home() {
           }
         }
 
-        @media (min-width: 1701px) {
-          .gift-browser-frame,
-          .linktree-smart-frame,
-          .recipient-frame,
-          .personalize-frame,
-          .checkout-frame {
-            transform: scale(1);
-          }
-        }
+@media (min-width: 1701px) {
+  .gift-browser-frame,
+  .linktree-smart-frame,
+  .recipient-frame,
+  .personalize-frame,
+  .checkout-frame {
+    transform: scale(calc(100vw / 1440));
+    transform-origin: top center;
+  }
+
+  .gift-browser-page,
+  .linktree-smart-page,
+  .recipient-page,
+  .personalize-page {
+    min-height: calc(100vh * (1440 / 100vw));
+  }
+
+  .checkout-page {
+    min-height: 100vh;
+  }
+}
 
         @keyframes wordEnter {
           0% {

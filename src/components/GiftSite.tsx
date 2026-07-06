@@ -337,7 +337,7 @@ const amounts = [
   { value: 500, left: 925, top: 734, width: 186, height: 71 },
 ];
 
-type ActivePage = "home" | "wall" | "product";
+type ActivePage = "home" | "wall" | "product" | "how" | "tracker";
 type ProductStep = "value" | "recipient" | "personalize" | "checkout";
 type RecipientType = "creator" | "someone" | "myself";
 type Creator = (typeof creators)[number];
@@ -524,6 +524,8 @@ export default function GiftSite({
 
   const homePath = `/${selectedCountrySlug}/home`;
   const shopPath = `/${selectedCountrySlug}/shop`;
+  const howPath = `/${selectedCountrySlug}/how-it-works`;
+  const trackerPath = `/${selectedCountrySlug}/gift-tracker`;
 
   const getCountryPath = (country: Country) => {
     const countrySlug = country.code.toLowerCase();
@@ -535,6 +537,14 @@ export default function GiftSite({
 
     if (activePage === "wall") {
       return `/${countrySlug}/shop`;
+    }
+
+    if (activePage === "how") {
+      return `/${countrySlug}/how-it-works`;
+    }
+
+    if (activePage === "tracker") {
+      return `/${countrySlug}/gift-tracker`;
     }
 
     if (productStep === "recipient") {
@@ -907,6 +917,14 @@ const triggerCountryToast = (country: Country = selectedCountry) => {
     navigateTo(shopPath);
   };
 
+const goToHowItWorks = () => {
+  navigateTo(howPath);
+};
+
+const goToGiftTracker = () => {
+  navigateTo(trackerPath);
+};
+
   const goToProductPage = (card: BrowserCard = defaultLinktreeProduct) => {
     setSelectedProductCard(card);
     resetProductFlow();
@@ -1026,7 +1044,11 @@ const handleCountryChange = (country: Country) => {
       ref={scrollRef}
       onScroll={handleScroll}
 className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
-  backgroundPage === "home" ? "bg-[#cbea19]" : "bg-[#f3f3f1]"
+  backgroundPage === "home"
+    ? "bg-[#cbea19]"
+    : backgroundPage === "how"
+      ? "bg-[#870019]"
+      : "bg-[#f3f3f1]"
 }`}
     >
 
@@ -1065,17 +1087,27 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
   Shop Gift Cards
 </a>
 
-            <button className="linktree-nav-item how-link" type="button">
-              How it Works
-            </button>
+<a
+  className="linktree-nav-item how-link"
+  href={howPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToHowItWorks();
+  }}
+>
+  How it Works
+</a>
 
-            <button className="linktree-nav-item tracker-link" type="button">
-              Gift Tracker
-            </button>
-
-            <button className="linktree-nav-item help-link" type="button">
-              Help
-            </button>
+<a
+  className="linktree-nav-item tracker-link"
+  href={trackerPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToGiftTracker();
+  }}
+>
+  Gift Tracker
+</a>
 
             <div className="country-area" ref={countryAreaRef}>
               <button
@@ -1166,18 +1198,26 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                   <div className="checkout-section checkout-contact-section">
                     <h2>Contact</h2>
 
-                    <label className="checkout-input-wrap">
-                      <span>Email for receipt</span>
-                      <input
-                        value={checkoutEmail}
-                        onChange={(event) =>
-                          setCheckoutEmail(event.target.value)
-                        }
-                        type="email"
-                        placeholder="Email for receipt"
-                        required
-                      />
-                    </label>
+<label className="checkout-input-wrap">
+  <span>
+    {recipientType === "myself"
+      ? "Email for gift card and receipt"
+      : "Email for receipt"}
+  </span>
+  <input
+    value={checkoutEmail}
+    onChange={(event) =>
+      setCheckoutEmail(event.target.value)
+    }
+    type="email"
+    placeholder={
+      recipientType === "myself"
+        ? "Email for gift card and receipt"
+        : "Email for receipt"
+    }
+    required
+  />
+</label>
 
                     {!checkoutReady && (
                       <p className="checkout-required-note">
@@ -1963,7 +2003,173 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
               </section>
             </main>
           )
-        ) : activePage === "wall" ? (
+) : activePage === "tracker" ? (
+  <main className="gift-tracker-page">
+    <section className="gift-tracker-hero">
+      <div className="gift-tracker-chat-card">
+        <div className="tracker-chat-topbar">
+          <span className="tracker-chat-menu">⋮</span>
+          <div className="tracker-chat-name">
+            <span className="tracker-chat-avatar">🎁</span>
+            <strong>Joy</strong>
+          </div>
+          <button type="button">End Chat</button>
+        </div>
+
+        <div className="tracker-chat-intro">
+          <div className="tracker-chat-big-avatar">🎁</div>
+          <h2>Joy</h2>
+          <p>
+            Hi I am Joy. I can help with gift card tracking, delivery, and
+            receipt questions.
+          </p>
+        </div>
+
+        <div className="tracker-chat-date">Today</div>
+
+        <div className="tracker-chat-message-row">
+          <span className="tracker-chat-small-avatar">🎁</span>
+          <div>
+            <p className="tracker-chat-question">
+              How can I help you with your gift card today?
+            </p>
+            <p className="tracker-chat-bubble">
+              Hi, I’m Joy. Enter your gift card order number on the right, or
+              ask me anything about your gift card.
+            </p>
+          </div>
+        </div>
+
+        <div className="tracker-chat-input-row">
+          <input placeholder="Message..." />
+          <button type="button">↑</button>
+        </div>
+      </div>
+
+      <div className="gift-tracker-help-card">
+        <p className="tracker-eyebrow">GIFT CARD SUPPORT</p>
+        <h1>Search Gift Card</h1>
+        <p className="tracker-subtitle">
+          Input gift card order number from your receipt and search.
+        </p>
+
+        <div className="tracker-search-bar">
+          <input placeholder="Input Gift Card Order number" />
+          <button type="button">Search</button>
+        </div>
+
+        <h2>Quick help topics</h2>
+
+        <div className="tracker-topic-grid">
+          <button type="button">Payment Methods</button>
+          <button type="button">Cancellations &amp; Refunds</button>
+          <button type="button">I Lost My Gift Card</button>
+        </div>
+
+        <div className="tracker-complaint-card">
+          <h3>Lodging a Complaint</h3>
+          <button type="button">Submit a complaint</button>
+          <a href="#">Complaints policy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+) : activePage === "how" ? (
+  <main className="how-it-works-page">
+    <section className="how-it-works-frame">
+      <h1>Questions? Answered</h1>
+
+      <div className="how-faq-list">
+        <details className="how-faq-item" open>
+          <summary>
+            <span>What is a Smart Card?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            A Smart Card lets the recipient choose from a curated range of gift
+            card brands instead of being locked into one store.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>Will I get a receipt?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            Yes. The checkout email you enter is used for the purchase receipt.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>Can I choose the gift card amount?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            Yes. Choose from the available values on the product page before
+            continuing to the recipient step.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>Can I send a gift card to a Linktree creator?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            Yes. Choose “Linktree creator,” pick the creator profile, then
+            complete the gift flow.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>What details do I need for someone else?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            You can enter the recipient’s name, email, or phone number depending
+            on where you want the gift card sent.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>Can I add a video or GIF?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            Yes. In the personalize step, you can add a greeting card, GIF,
+            short video, audio file, or written message.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>Can I change the country?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            Yes. Use the country selector in the navigation bar to switch the
+            shopping country and currency.
+          </p>
+        </details>
+
+        <details className="how-faq-item">
+          <summary>
+            <span>When does the recipient get the gift card?</span>
+            <span className="how-faq-icon">⌄</span>
+          </summary>
+          <p>
+            The gift card is delivered digitally after checkout using the
+            recipient details entered in the gift flow.
+          </p>
+        </details>
+      </div>
+    </section>
+  </main>
+) : activePage === "wall" ? (
           <main className="gift-browser-page">
             <section className="gift-browser-frame">
               <div className="hero-image-wrap">
@@ -2403,6 +2609,387 @@ a {
           transition: background-color 360ms ease;
           font-family: "Link Sans", Arial, sans-serif !important;
         }
+
+.gift-tracker-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.34), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.24), transparent 30%),
+    #e9b6e8;
+  padding: 142px 24px 110px;
+  color: #1f2333;
+}
+
+.gift-tracker-hero {
+  width: min(1220px, calc(100vw - 48px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 430px minmax(0, 1fr);
+  gap: 34px;
+  align-items: stretch;
+}
+
+.gift-tracker-chat-card,
+.gift-tracker-help-card {
+  border-radius: 36px;
+  background: #ffffff;
+  box-shadow: 0 26px 80px rgba(53, 21, 64, 0.16);
+}
+
+.gift-tracker-chat-card {
+  min-height: 560px;
+  padding: 19px 18px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tracker-chat-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #1f2333;
+}
+
+.tracker-chat-menu {
+  font-size: 24px;
+  line-height: 1;
+  color: #777;
+}
+
+.tracker-chat-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: auto;
+  font-size: 15px;
+}
+
+.tracker-chat-avatar,
+.tracker-chat-small-avatar,
+.tracker-chat-big-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #ffe1ea;
+}
+
+.tracker-chat-avatar {
+  width: 27px;
+  height: 27px;
+  font-size: 14px;
+}
+
+.tracker-chat-topbar button {
+  height: 34px;
+  padding: 0 17px;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #9a9a9a;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.tracker-chat-intro {
+  margin: 58px auto 38px;
+  max-width: 315px;
+  text-align: center;
+}
+
+.tracker-chat-big-avatar {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 17px;
+  font-size: 31px;
+}
+
+.tracker-chat-intro h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.tracker-chat-intro p,
+.tracker-chat-question,
+.tracker-chat-bubble {
+  color: #4f5360;
+  font-size: 14px;
+  line-height: 1.28;
+  font-weight: 750;
+}
+
+.tracker-chat-date {
+  margin: 0 auto 28px;
+  color: #9a9a9a;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.tracker-chat-message-row {
+  display: flex;
+  gap: 12px;
+  margin: 0 7px;
+}
+
+.tracker-chat-small-avatar {
+  flex: 0 0 auto;
+  width: 25px;
+  height: 25px;
+  font-size: 12px;
+}
+
+.tracker-chat-question {
+  margin: 0 0 8px;
+  color: #242838;
+}
+
+.tracker-chat-bubble {
+  margin: 0;
+  max-width: 340px;
+  color: #242838;
+}
+
+.tracker-chat-input-row {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d4d4d4;
+  border-radius: 13px;
+  padding: 7px 8px 7px 13px;
+}
+
+.tracker-chat-input-row input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.tracker-chat-input-row button {
+  width: 31px;
+  height: 31px;
+  border: 0;
+  border-radius: 999px;
+  background: #777;
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.gift-tracker-help-card {
+  padding: 48px 48px 44px;
+  text-align: center;
+}
+
+.tracker-eyebrow {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  color: #1f2333;
+}
+
+.gift-tracker-help-card h1 {
+  margin: 0;
+  font-size: clamp(42px, 4.35vw, 66px);
+  line-height: 0.9;
+  letter-spacing: -2.4px;
+  font-weight: 950;
+  color: #1f2333;
+}
+
+.tracker-subtitle {
+  margin: 18px auto 31px;
+  max-width: 600px;
+  color: #1f2333;
+  font-size: 19px;
+  line-height: 1.22;
+  font-weight: 750;
+}
+
+.tracker-search-bar {
+  width: min(620px, 100%);
+  min-height: 66px;
+  margin: 0 auto 38px;
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: #f6f6f3;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.tracker-search-bar input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 0 18px;
+  color: #1f2333;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 850;
+  text-overflow: ellipsis;
+}
+
+.tracker-search-bar input::placeholder {
+  color: #727784;
+}
+
+.tracker-search-bar button,
+.tracker-complaint-card button {
+  border: 0;
+  border-radius: 999px;
+  background: #1f2333;
+  color: #ffffff;
+  font-weight: 950;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tracker-search-bar button {
+  flex: 0 0 auto;
+  height: 52px;
+  padding: 0 31px;
+}
+
+.gift-tracker-help-card h2,
+.tracker-complaint-card h3 {
+  margin: 0 0 20px;
+  font-size: 25px;
+  line-height: 1.05;
+  font-weight: 950;
+  color: #1f2333;
+}
+
+.tracker-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 36px;
+}
+
+.tracker-topic-grid button {
+  min-height: 96px;
+  padding: 16px 12px;
+  border: 0;
+  border-radius: 22px;
+  background: #ffffff;
+  color: #e03d5d;
+  box-shadow: 0 18px 34px rgba(44, 22, 54, 0.11);
+  font-size: 15px;
+  line-height: 1.12;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.tracker-complaint-card {
+  width: min(420px, 100%);
+  margin: 0 auto;
+  padding-top: 2px;
+}
+
+.tracker-complaint-card button {
+  height: 42px;
+  padding: 0 25px;
+  background: #e03d5d;
+}
+
+.tracker-complaint-card a {
+  display: block;
+  margin-top: 17px;
+  color: #e03d5d;
+  font-size: 15px;
+  font-weight: 950;
+  text-decoration: underline;
+}
+
+.how-it-works-page {
+  min-height: 100vh;
+  background: #870019;
+  padding: 145px 24px 70px;
+  color: #f7b9dc;
+}
+
+.page-content:has(.how-it-works-page) {
+  min-height: 100vh;
+  background: #870019 !important;
+}
+
+.how-it-works-frame {
+  width: min(980px, calc(100vw - 48px));
+  margin: 0 auto;
+}
+
+.how-it-works-frame h1 {
+  margin: 0 0 38px;
+  text-align: center;
+  font-size: 56px;
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -2.2px;
+  color: #f7b9dc;
+}
+
+.how-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 0;
+}
+
+.how-faq-item {
+  overflow: hidden;
+  border-radius: 27px;
+  background: #670014;
+  color: #f7b9dc;
+}
+
+.how-faq-item summary {
+  min-height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 46px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.how-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.how-faq-icon {
+  flex: 0 0 auto;
+  font-size: 22px;
+  font-weight: 800;
+  transition: transform 180ms ease;
+}
+
+.how-faq-item[open] .how-faq-icon {
+  transform: rotate(180deg);
+}
+
+.how-faq-item p {
+  margin: -12px 0 0;
+  padding: 0 46px 34px;
+  max-width: 790px;
+  color: #ffd6ea;
+  font-size: 18px;
+  line-height: 1.45;
+  font-weight: 600;
+}
 
         .page-content {
           opacity: 1;
@@ -4801,6 +5388,59 @@ a {
     transform: translateX(-50%) translateY(-160%) scale(1.5) !important;
   }
 
+.gift-tracker-page {
+  padding: 202px 24px 42px !important;
+}
+
+.gift-tracker-hero {
+  width: min(1430px, calc(100vw - 104px)) !important;
+  grid-template-columns: 485px minmax(860px, 1fr) !important;
+  gap: 51px !important;
+  transform: scale(1.17) !important;
+  transform-origin: top center !important;
+}
+
+.gift-tracker-chat-card {
+  min-height: 620px !important;
+}
+
+.gift-tracker-help-card {
+  padding: 72px 78px 66px !important;
+}
+
+.gift-tracker-help-card h1 {
+  font-size: 84px !important;
+}
+
+.tracker-subtitle {
+  font-size: 22.5px !important;
+  max-width: 740px !important;
+}
+
+.tracker-search-bar {
+  width: min(790px, 100%) !important;
+  min-height: 74px !important;
+}
+
+.tracker-search-bar button {
+  height: 58px !important;
+  padding: 0 38px !important;
+}
+
+.tracker-topic-grid {
+  gap: 23px !important;
+}
+
+.tracker-topic-grid button {
+  min-height: 123px !important;
+  font-size: 16.5px !important;
+}
+
+.gift-tracker-help-card h2,
+.tracker-complaint-card h3 {
+  font-size: 28px !important;
+}
+
   .gift-browser-frame,
   .linktree-smart-frame,
   .recipient-frame,
@@ -4808,6 +5448,19 @@ a {
     transform: scale(1.5) !important;
     transform-origin: top center !important;
   }
+
+.how-it-works-frame {
+  transform: scale(1.22) !important;
+  transform-origin: top center !important;
+}  
+
+.how-it-works-page {
+  padding: 185px 24px 260px !important;
+}
+
+.how-faq-list {
+  padding-bottom: 70px !important;
+}
 
   .checkout-page {
     background: #f3f3f1 !important;
@@ -4899,10 +5552,10 @@ a {
     transform-origin: center center !important;
   }
 
-  .landing-blue-dude {
-    transform: translateY(1.2vh) scale(1) !important;
-    transform-origin: bottom center !important;
-  }
+.landing-blue-dude {
+  transform: translateX(-30px) translateY(1.2vh) scale(1) !important;
+  transform-origin: bottom center !important;
+}
 
   .landing-purple-shape {
     transform: translateY(-1.5vh) scale(1.12) !important;

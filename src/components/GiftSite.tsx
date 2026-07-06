@@ -544,6 +544,42 @@ useEffect(() => {
   const [cardCvc, setCardCvc] = useState("");
   const [cardName, setCardName] = useState("");
 
+  useEffect(() => {
+  setSelectedProductCard(initialProduct);
+  setProductStep(initialProductStep);
+  setRecipientType(initialRecipientType);
+  setSelectedAmount(initialAmount);
+  setSelectedCreator(initialCreator);
+  setRecipientName(initialRecipientName);
+  setRecipientEmail(initialRecipientEmail);
+  setRecipientPhone(initialRecipientPhone);
+  setPersonalizeMediaOn(initialPersonalizeMediaOn);
+  setPersonalizeMessageOn(initialPersonalizeMessageOn);
+  setMediaMode(initialMediaMode);
+  setSelectedMediaIndex(initialSelectedMediaIndex);
+  setUploadedMediaName(initialUploadedMediaName);
+  setPersonalMessage(initialPersonalMessage);
+  setAmountDropdownOpen(false);
+  setCreatorPickerOpen(false);
+  resetScroll();
+}, [
+  pathname,
+  initialProductId,
+  initialProductStep,
+  initialRecipientType,
+  initialAmount,
+  initialCreatorHandle,
+  initialRecipientName,
+  initialRecipientEmail,
+  initialRecipientPhone,
+  initialPersonalizeMediaOn,
+  initialPersonalizeMessageOn,
+  initialMediaMode,
+  initialSelectedMediaIndex,
+  initialUploadedMediaName,
+  initialPersonalMessage,
+]);
+
   const formatAmount = (value: number) => {
     return `${selectedCountry.currency}${value.toFixed(2)}`;
   };
@@ -715,7 +751,7 @@ useEffect(() => {
         : recipientPhoneValid
         ? recipientPhone.trim()
         : "the recipient"
-      : checkoutEmail.trim() || "your email";
+      : checkoutEmail.trim() || "Your email";
 
   const creatorQueryParam =
     selectedCreator && recipientType === "creator"
@@ -1027,13 +1063,15 @@ const handleCountryChange = (country: Country) => {
   }, 200);
 };
 
-  const handleValueContinue = () => {
-    if (!selectedAmount) return;
+const handleValueContinue = () => {
+  if (!selectedAmount) return;
 
-    navigateTo(
-      `/${selectedCountrySlug}/product/${selectedProductCard.id}/recipient?amount=${selectedAmount}`
-    );
-  };
+  setProductStep("recipient");
+
+  navigateTo(
+    `/${selectedCountrySlug}/product/${selectedProductCard.id}/recipient?amount=${selectedAmount}`
+  );
+};
 
   const handleRecipientTypeChange = (type: RecipientType) => {
     setRecipientType(type);
@@ -1047,10 +1085,10 @@ const handleCountryChange = (country: Country) => {
     setCreatorPickerOpen(false);
   };
 
-  const handleRecipientBack = () => {
-    resetProductFlow();
-    setTimeout(() => resetScroll(), 20);
-  };
+const handleRecipientBack = () => {
+  resetProductFlow();
+  navigateTo(`/${selectedCountrySlug}/product/${selectedProductCard.id}`);
+};
 
   const handleFinalCTA = () => {
     if (!recipientReady) return;
@@ -1077,33 +1115,56 @@ const handleCountryChange = (country: Country) => {
     );
   };
 
-  const handleCheckoutSubmit = () => {
-    if (!checkoutReady) return;
+const handleCheckoutSubmit = async () => {
+  if (!checkoutReady) return;
 
-    console.log("Checkout submitted:", {
-      receiptEmail: checkoutEmail,
-      amount: selectedAmountObject.value,
-      currency: selectedCountry.currency,
-      country: selectedCountry.label,
-      cardNumber,
-      cardExpiry,
-      cardCvc,
-      cardName,
-      recipientType,
-      creator: selectedCreator?.handle ?? null,
-      recipientName,
-      recipientEmail,
-      recipientPhone,
-      giftDestination,
-      personalizeMediaOn,
-      mediaMode,
-      selectedMediaIndex,
-      uploadedMediaName,
-      personalizeMessageOn,
-      personalMessage,
-      product: selectedProductCard.fullTitle,
+  try {
+    const response = await fetch("/api/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+body: JSON.stringify({
+  returnUrl: window.location.href,
+  successUrl: `${window.location.origin}/${selectedCountrySlug}/thank-you`,
+  checkoutEmail,
+        amount: selectedAmountObject.value,
+        currency:
+          selectedCountry.code === "UK"
+            ? "gbp"
+            : selectedCountry.code === "AU"
+              ? "aud"
+              : selectedCountry.code === "NZ"
+                ? "nzd"
+                : selectedCountry.code === "CA"
+                  ? "cad"
+                  : "usd",
+        country: selectedCountry.label,
+        productId: selectedProductCard.id,
+        productTitle: selectedProductCard.fullTitle,
+        recipientType,
+        recipientName,
+        recipientEmail,
+        recipientPhone,
+        creatorHandle: selectedCreator?.handle ?? "",
+        personalMessage,
+      }),
     });
-  };
+
+    const data = await response.json();
+
+    if (!response.ok || !data.url) {
+      console.error("Checkout error:", data.error);
+      alert("Could not start checkout.");
+      return;
+    }
+
+    window.location.href = data.url;
+  } catch (error) {
+    console.error("Checkout submit failed:", error);
+    alert("Something went wrong starting checkout.");
+  }
+};
 
   return (
     <main
@@ -1224,18 +1285,26 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
           productStep === "checkout" ? (
             <main className="checkout-page">
               <section className="checkout-header">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setProductStep(
-                      recipientType === "myself" ? "recipient" : "personalize"
-                    );
-                    setTimeout(() => resetScroll(), 20);
-                  }}
-                  className="checkout-back-button"
-                >
-                  ← Back
-                </button>
+<button
+  type="button"
+  onClick={() => {
+    const amount = selectedAmountObject.value;
+
+    if (recipientType === "myself") {
+      navigateTo(
+        `/${selectedCountrySlug}/product/${selectedProductCard.id}/recipient?amount=${amount}`
+      );
+      return;
+    }
+
+    navigateTo(
+      `/${selectedCountrySlug}/product/${selectedProductCard.id}/personalize/${recipientType}?amount=${amount}${creatorQueryParam}${recipientQueryParam}`
+    );
+  }}
+  className="checkout-back-button"
+>
+  ← Back
+</button>
 
 <a
   href={shopPath}
@@ -1301,116 +1370,39 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                     </label>
                   </div>
 
-                  <div className="express-checkout">
-                    <p>Express checkout</p>
+<div className="checkout-section checkout-review-section">
+  <h2>Order summary</h2>
+  <p className="checkout-muted">
+    Review your gift details before continuing to payment.
+  </p>
 
-                    <div className="express-buttons">
-                      <button
-                        type="button"
-                        className="apple-pay-button"
-                        aria-label="Apple Pay"
-                      >
-                        <img
-                          src="/images/apple-pay-white.png"
-                          alt="Apple Pay"
-                          draggable={false}
-                        />
-                      </button>
+  <div className="checkout-review-card">
+    <div className="checkout-review-row">
+      <span>Gift card</span>
+      <strong>{productTitle}</strong>
+    </div>
 
-                      <button
-                        type="button"
-                        className="google-pay-button"
-                        aria-label="Google Pay"
-                      >
-                        <img
-                          src="/images/google-pay-white.png"
-                          alt="Google Pay"
-                          draggable={false}
-                        />
-                      </button>
-                    </div>
+    <div className="checkout-review-row">
+      <span>Gift value</span>
+      <strong>{selectedAmountLabel}</strong>
+    </div>
 
-                    <div className="checkout-or">
-                      <span />
-                      <p>OR</p>
-                      <span />
-                    </div>
-                  </div>
+    <div className="checkout-review-row">
+      <span>Delivery</span>
+      <strong>{giftDestination}</strong>
+    </div>
 
-                  <div className="checkout-section checkout-payment-section">
-                    <h2>Payment</h2>
-                    <p className="checkout-muted">
-                      All transactions are secure and encrypted.
-                    </p>
+    <div className="checkout-review-row">
+      <span>Receipt</span>
+      <strong>{checkoutEmail.trim() || "Your email"}</strong>
+    </div>
+  </div>
 
-                    <div className="payment-card">
-                      <div className="payment-card-header">
-                        <span>Credit card</span>
-
-                        <div className="payment-card-icons">
-                          <span>VISA</span>
-                          <span>MC</span>
-                          <span>AMEX</span>
-                        </div>
-                      </div>
-
-                      <div className="payment-card-body">
-                        <input
-                          value={cardNumber}
-                          onChange={(event) =>
-                            setCardNumber(event.target.value)
-                          }
-                          placeholder="Card number"
-                        />
-
-                        <div className="payment-grid">
-                          <input
-                            value={cardExpiry}
-                            onChange={(event) =>
-                              setCardExpiry(event.target.value)
-                            }
-                            placeholder="Expiration date (MM / YY)"
-                          />
-
-                          <input
-                            value={cardCvc}
-                            onChange={(event) =>
-                              setCardCvc(event.target.value)
-                            }
-                            placeholder="Security code"
-                          />
-                        </div>
-
-                        <input
-                          value={cardName}
-                          onChange={(event) => setCardName(event.target.value)}
-                          placeholder="Name on card"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="checkout-section">
-                    <h2>Billing address</h2>
-
-                    <div className="billing-card">
-                      <select value={selectedCountry.label} onChange={() => {}}>
-                        {countries.map((country) => (
-                          <option key={country.code}>{country.label}</option>
-                        ))}
-                      </select>
-
-                      <input placeholder="First name" />
-                      <input placeholder="Last name" />
-                      <input placeholder="Address" />
-                      <input placeholder="Apartment, suite, etc. (optional)" />
-
-                      <div className="payment-grid">
-                        <input placeholder="City" />
-                        <input placeholder="Postcode" />
-                      </div>
-                    </div>
-                  </div>
+  <div className="checkout-review-stripe-note">
+    <span>✓</span>
+    <p>Your payment is secure and encrypted on the next screen.</p>
+  </div>
+</div>
 
                   <button
                     type="button"
@@ -5186,7 +5178,130 @@ a {
           gap: 12px;
         }
 
+.checkout-page {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.checkout-frame {
+  height: calc(100vh - 74px) !important;
+  min-height: calc(100vh - 74px) !important;
+  overflow: hidden !important;
+}
+
+.checkout-form-side,
+.checkout-summary-side {
+  height: 100% !important;
+  overflow: visible !important;
+}
+
+.checkout-review-section {
+  margin-top: 34px;
+}
+
+.checkout-review-section h2 {
+  margin-bottom: 8px;
+}
+
+.checkout-review-card {
+  margin-top: 20px;
+  border: 2px solid #171717;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.checkout-review-row {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e5df;
+  color: #171717;
+}
+
+.checkout-review-row:last-child {
+  border-bottom: 0;
+}
+
+.checkout-review-row span {
+  color: #777777;
+  font-size: 15px;
+  line-height: 1.1;
+  font-weight: 850;
+}
+
+.checkout-review-row strong {
+  min-width: 0;
+  color: #171717;
+  font-size: 17px;
+  line-height: 1.15;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.checkout-review-stripe-note {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #5f5f5f;
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.checkout-review-stripe-note span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #ccff00;
+  color: #171717;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.main-shell:has(.checkout-page) {
+  overflow-y: auto !important;
+}
+
+.page-content:has(.checkout-page) {
+  min-height: 100vh !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.checkout-page {
+  min-height: 100vh !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.checkout-frame {
+  min-height: calc(100vh - 74px) !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.checkout-form-side,
+.checkout-summary-side {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
         .checkout-pay-button {
+          position: relative;
+          z-index: 5;
+          pointer-events: auto;
           width: 100%;
           height: 66px;
           margin-top: 34px;
@@ -5453,6 +5568,29 @@ a {
   .linktree-nav-shell.nav-hidden {
     transform: translateX(-50%) translateY(-160%) scale(1.5) !important;
   }
+
+.main-shell:has(.checkout-page) {
+  overflow-y: hidden !important;
+}
+
+.page-content:has(.checkout-page) {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.checkout-page {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.checkout-frame {
+  height: calc(100vh - 74px) !important;
+  min-height: calc(100vh - 74px) !important;
+  overflow: hidden !important;
+}
 
 .gift-tracker-page {
   padding: 202px 24px 42px !important;

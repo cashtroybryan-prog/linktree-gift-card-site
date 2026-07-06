@@ -26,15 +26,15 @@ const categoryImages = [
 ];
 
 const homepageGiftCards = [
-  "/images/target.png",
-  "/images/uber.png",
-  "/images/best-buy.png",
-  "/images/ebay.png",
-  "/images/roblox.png",
-  "/images/playstation.png",
-  "/images/amc-theatre.png",
-  "/images/american-eagle.png",
-  "/images/airbnb.png",
+  { id: "target", src: "/images/target.png" },
+  { id: "uber", src: "/images/uber.png" },
+  { id: "best-buy", src: "/images/best-buy.png" },
+  { id: "ebay", src: "/images/ebay.png" },
+  { id: "roblox", src: "/images/roblox.png" },
+  { id: "playstation", src: "/images/playstation.png" },
+  { id: "amc", src: "/images/amc-theatre.png" },
+  { id: "american-eagle", src: "/images/american-eagle.png" },
+  { id: "airbnb", src: "/images/airbnb.png" },
 ];
 
 const defaultLinktreeProduct: BrowserCard = {
@@ -83,6 +83,61 @@ const browserCards: BrowserCard[] = [
     isNew: false,
     description:
       "Target eGift Cards give recipients the freedom to shop everyday essentials, home finds, beauty, fashion, toys, tech, and more.",
+  },
+  {
+    id: "best-buy",
+    title: "Best Buy eGift Card",
+    fullTitle: "Best Buy eGift Card",
+    image: "/images/best-buy-v2.png",
+    tileImage: "/images/best-buy-v2.png",
+    category: "Retail",
+    isNew: false,
+    description:
+      "Best Buy eGift Cards are perfect for tech, gaming, appliances, entertainment, accessories, and everyday electronics upgrades.",
+  },
+  {
+    id: "ebay",
+    title: "eBay eGift Card",
+    fullTitle: "eBay eGift Card",
+    image: "/images/ebay.png",
+    tileImage: "/images/ebay.png",
+    category: "Retail",
+    isNew: false,
+    description:
+      "eBay eGift Cards give recipients access to millions of items, from tech and collectibles to fashion, home, hobbies, and hard-to-find gifts.",
+  },
+  {
+    id: "roblox",
+    title: "Roblox eGift Card",
+    fullTitle: "Roblox eGift Card",
+    image: "/images/roblox-v2.png",
+    tileImage: "/images/roblox-v2.png",
+    category: "Gaming",
+    isNew: false,
+    description:
+      "Roblox eGift Cards let players unlock Robux, avatar items, game experiences, and premium digital fun across Roblox.",
+  },
+  {
+    id: "american-eagle",
+    title: "American Eagle eGift...",
+    fullTitle: "American Eagle eGift Card",
+    image: "/images/american-eagle-v2.png",
+    tileImage: "/images/american-eagle-v2.png",
+    category: "Fashion",
+    isNew: false,
+    description:
+      "American Eagle eGift Cards are made for denim, everyday style, casual essentials, accessories, and easy fashion gifting.",
+  },
+  {
+    id: "airbnb",
+    title: "Airbnb eGift Card",
+    fullTitle: "Airbnb eGift Card",
+    image: "/images/airbnb-v2.png",
+    tileImage: "/images/airbnb-v2.png",
+    category: "Travel",
+    isNew: false,
+    description:
+      "Airbnb eGift Cards help recipients book stays, getaways, experiences, and memorable trips almost anywhere.",
   },
   {
     id: "doordash",
@@ -182,6 +237,7 @@ const browserCategories = [
   "Retail",
   "Entertainment",
   "Gaming",
+  "Travel",
   "Beauty",
   "Health",
 ];
@@ -969,9 +1025,9 @@ const handleCountryChange = (country: Country) => {
     <main
       ref={scrollRef}
       onScroll={handleScroll}
-      className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
-        backgroundPage === "home" ? "bg-[#cbea19]" : "bg-[#f3f3f1]"
-      }`}
+className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
+  backgroundPage === "home" ? "bg-[#cbea19]" : "bg-[#f3f3f1]"
+}`}
     >
 
 
@@ -982,26 +1038,32 @@ const handleCountryChange = (country: Country) => {
           }`}
         >
           <nav className="linktree-nav" aria-label="Main navigation">
-            <button
-              className="linktree-logo-link"
-              type="button"
-              onClick={goHome}
-              aria-label="Go home"
-            >
-              <img
-                className="linktree-logo"
-                src="/images/linktree-logo.png"
-                alt="Linktree"
-              />
-            </button>
+<a
+  className="linktree-logo-link"
+  href={homePath}
+  onClick={(event) => {
+    event.preventDefault();
+    goHome();
+  }}
+  aria-label="Go home"
+>
+  <img
+    className="linktree-logo"
+    src="/images/linktree-logo.png"
+    alt="Linktree"
+  />
+</a>
 
-            <button
-              className="linktree-nav-item shop-link"
-              type="button"
-              onClick={goToWallOfCards}
-            >
-              Shop Gift Cards
-            </button>
+<a
+  className="linktree-nav-item shop-link"
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+>
+  Shop Gift Cards
+</a>
 
             <button className="linktree-nav-item how-link" type="button">
               How it Works
@@ -1077,14 +1139,17 @@ const handleCountryChange = (country: Country) => {
                   ← Back
                 </button>
 
-                <button
-                  type="button"
-                  onClick={goToWallOfCards}
-                  className="checkout-close-button"
-                  aria-label="Close and return to wall of cards"
-                >
-                  ×
-                </button>
+<a
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  className="checkout-close-button"
+  aria-label="Close and return to wall of cards"
+>
+  ×
+</a>
 
                 <div className="checkout-logo-wrap">
                   <img
@@ -1330,14 +1395,17 @@ const handleCountryChange = (country: Country) => {
                   ← Back
                 </button>
 
-                <button
-                  type="button"
-                  onClick={goToWallOfCards}
-                  className="personalize-close-button"
-                  aria-label="Close and return to wall of cards"
-                >
-                  ×
-                </button>
+<a
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  className="personalize-close-button"
+  aria-label="Close and return to wall of cards"
+>
+  ×
+</a>
 
                 <div className="personalize-card">
                   <h1>Personalize</h1>
@@ -1552,14 +1620,17 @@ const handleCountryChange = (country: Country) => {
                   ← Back
                 </button>
 
-                <button
-                  type="button"
-                  onClick={goToWallOfCards}
-                  className="recipient-close-button"
-                  aria-label="Close and return to wall of cards"
-                >
-                  ×
-                </button>
+<a
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  className="recipient-close-button"
+  aria-label="Close and return to wall of cards"
+>
+  ×
+</a>
 
                 <div className="recipient-left product-info-column">
                   <div className="product-info-image-wrap">
@@ -1582,6 +1653,9 @@ const handleCountryChange = (country: Country) => {
                   )}
 
                   <p className="product-info-expiry">No Expiry</p>
+                  <a className="product-info-link" href="#">
+  Terms &amp; Conditions
+</a>
                 </div>
 
                 <div className="recipient-right">
@@ -1809,13 +1883,16 @@ const handleCountryChange = (country: Country) => {
                   selectedAmount ? "has-continue" : ""
                 }`}
               >
-                <button
-                  type="button"
-                  onClick={goToWallOfCards}
-                  className="linktree-back-button"
-                >
-                  ← Back
-                </button>
+<a
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  className="linktree-back-button"
+>
+  ← Back
+</a>
 
                 <div className="product-info-column product-info-value">
                   <div className="product-info-image-wrap">
@@ -1837,7 +1914,11 @@ const handleCountryChange = (country: Country) => {
                     </a>
                   )}
 
-                  <p className="product-info-expiry">No Expiry</p>
+  <p className="product-info-expiry">No Expiry</p>
+
+<a className="product-info-link" href="#">
+  Terms &amp; Conditions
+</a>
                 </div>
 
                 <h2 className="linktree-purchase-heading">
@@ -2012,32 +2093,36 @@ const handleCountryChange = (country: Country) => {
               )}
 
               <div className="browser-card-grid">
-                {visibleBrowserCards.map((card) => {
-                  const isSelected = selectedBrowserCardId === card.id;
+{visibleBrowserCards.map((card) => {
+  const isSelected = selectedBrowserCardId === card.id;
+  const productPath = `/${selectedCountrySlug}/product/${card.id}`;
 
-                  return (
-                    <button
-                      key={card.id}
-                      type="button"
-                      className={`gift-card-tile ${
-                        isSelected ? "is-selected" : ""
-                      }`}
-                      onClick={() => handleBrowserCardClick(card)}
-                      aria-pressed={isSelected}
-                    >
-                      <div className="gift-card-image-wrap">
-                        <img
-                          className={`gift-card-image gift-card-image-${card.id}`}
-                          src={card.tileImage}
-                          alt={card.fullTitle}
-                        />
-                      </div>
+  return (
+    <a
+      key={card.id}
+      href={productPath}
+      className={`gift-card-tile ${
+        isSelected ? "is-selected" : ""
+      }`}
+      onClick={(event) => {
+        event.preventDefault();
+        handleBrowserCardClick(card);
+      }}
+      aria-label={`Shop ${card.fullTitle}`}
+    >
+      <div className="gift-card-image-wrap">
+        <img
+          className={`gift-card-image gift-card-image-${card.id}`}
+          src={card.tileImage}
+          alt={card.fullTitle}
+        />
+      </div>
 
-                      <p className="gift-card-title">{card.title}</p>
-                      <p className="gift-card-range">{giftCardRange}</p>
-                    </button>
-                  );
-                })}
+      <p className="gift-card-title">{card.title}</p>
+      <p className="gift-card-range">{giftCardRange}</p>
+    </a>
+  );
+})}
               </div>
             </section>
           </main>
@@ -2051,62 +2136,45 @@ const handleCountryChange = (country: Country) => {
                 className="hero-bg absolute inset-0 h-full w-full object-cover select-none pointer-events-none"
               />
 
-              <button
-                onClick={goToWallOfCards}
-                aria-label="Start browsing"
-                className="start-browsing-button absolute z-[300] cursor-pointer rounded-full bg-transparent"
-              />
+<a
+  href={shopPath}
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  aria-label="Start browsing"
+  className="start-browsing-button absolute z-[300] cursor-pointer rounded-full bg-transparent"
+/>
 
-              <div className="carousel-window absolute z-10 overflow-hidden pointer-events-none">
+              <div className="carousel-window absolute z-10 overflow-hidden">
                 <div className="carousel-track flex flex-col">
-                  <img
-                    src="/images/support-creators.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/gaming-wishlist.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/self-care-sale.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/support-creators.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/gaming-wishlist.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/self-care-sale.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
-
-                  <img
-                    src="/images/support-creators.png"
-                    alt=""
-                    draggable={false}
-                    className="carousel-card"
-                  />
+                  {[
+                    "/images/support-creators.png",
+                    "/images/gaming-wishlist.png",
+                    "/images/self-care-sale.png",
+                    "/images/support-creators.png",
+                    "/images/gaming-wishlist.png",
+                    "/images/self-care-sale.png",
+                    "/images/support-creators.png",
+                  ].map((src, index) => (
+<a
+  key={`${src}-${index}`}
+  href={shopPath}
+  className="carousel-card-link"
+  onClick={(event) => {
+    event.preventDefault();
+    goToWallOfCards();
+  }}
+  aria-label="Shop gift cards"
+>
+  <img
+    src={src}
+    alt=""
+    draggable={false}
+    className="carousel-card"
+  />
+</a>
+                  ))}
                 </div>
               </div>
             </section>
@@ -2146,19 +2214,36 @@ const handleCountryChange = (country: Country) => {
 
               <div className="absolute left-0 top-[39%] w-full overflow-hidden">
                 <div className="gift-card-row flex w-max gap-[2vw]">
-                  {[
-                    ...homepageGiftCards,
-                    ...homepageGiftCards,
-                    ...homepageGiftCards,
-                  ].map((src, index) => (
-                    <img
-                      key={`${src}-${index}`}
-                      src={src}
-                      alt=""
-                      draggable={false}
-                      className="h-[16.2vw] w-[26.1vw] flex-shrink-0 rounded-[1.8vw] object-cover select-none pointer-events-none"
-                    />
-                  ))}
+{[
+  ...homepageGiftCards,
+  ...homepageGiftCards,
+  ...homepageGiftCards,
+].map((card, index) => {
+  const productCard =
+    browserCards.find((item) => item.id === card.id) ??
+    defaultLinktreeProduct;
+  const productPath = `/${selectedCountrySlug}/product/${productCard.id}`;
+
+  return (
+    <a
+      key={`${card.id}-${index}`}
+      href={productPath}
+      className="h-[16.2vw] w-[26.1vw] flex-shrink-0 rounded-[1.8vw] bg-transparent p-0 border-0 cursor-pointer overflow-hidden no-underline"
+      onClick={(event) => {
+        event.preventDefault();
+        goToProductPage(productCard);
+      }}
+      aria-label={`Shop ${productCard.fullTitle}`}
+    >
+      <img
+        src={card.src}
+        alt=""
+        draggable={false}
+        className="h-full w-full object-cover select-none pointer-events-none"
+      />
+    </a>
+  );
+})}
                 </div>
               </div>
             </section>
@@ -2171,13 +2256,16 @@ const handleCountryChange = (country: Country) => {
                 className="block h-auto w-full select-none pointer-events-none"
               />
 
-              <button
-                type="button"
-                className="blue-start-gifting-button"
-                onClick={() => goToProductPage(defaultLinktreeProduct)}
-              >
-                Start gifting now
-              </button>
+<a
+  href={`/${selectedCountrySlug}/product/${defaultLinktreeProduct.id}`}
+  className="blue-start-gifting-button"
+  onClick={(event) => {
+    event.preventDefault();
+    goToProductPage(defaultLinktreeProduct);
+  }}
+>
+  Start gifting now
+</a>
             </section>
 
 <section className="landing-claim-section">
@@ -2303,6 +2391,14 @@ const handleCountryChange = (country: Country) => {
           font-family: "Link Sans", Arial, sans-serif !important;
         }
 
+a {
+
+  color: inherit;
+
+  text-decoration: none;
+
+}
+  
         .main-shell {
           transition: background-color 360ms ease;
           font-family: "Link Sans", Arial, sans-serif !important;
@@ -2965,6 +3061,8 @@ const handleCountryChange = (country: Country) => {
           transition:
             transform 160ms ease,
             box-shadow 160ms ease;
+            text-decoration: none;
+            color: inherit;
         }
 
         .gift-card-tile:hover {
@@ -4588,22 +4686,37 @@ const handleCountryChange = (country: Country) => {
           height: 100vh;
         }
 
-        .carousel-track {
-          gap: var(--carousel-gap);
-          animation: carouselStep 13s ease-in-out infinite;
-          pointer-events: none;
-        }
+.carousel-track {
+  gap: var(--carousel-gap);
+  animation: carouselStep 11s ease-in-out infinite;
+  pointer-events: auto;
+}
 
-        .carousel-card {
-          width: var(--carousel-size);
-          height: var(--carousel-size);
-          object-fit: cover;
-          border-radius: 2vw;
-          flex-shrink: 0;
-          user-select: none;
-          -webkit-user-drag: none;
-          pointer-events: none;
-        }
+.carousel-card-link {
+  width: var(--carousel-size);
+  height: var(--carousel-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2vw;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: block;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.carousel-card {
+  width: var(--carousel-size);
+  height: var(--carousel-size);
+  object-fit: cover;
+  border-radius: 2vw;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
 
         .word-window {
           position: relative;
@@ -4678,15 +4791,130 @@ const handleCountryChange = (country: Country) => {
           }
         }
 
-        @media (min-width: 1701px) {
-          .gift-browser-frame,
-          .linktree-smart-frame,
-          .recipient-frame,
-          .personalize-frame,
-          .checkout-frame {
-            transform: scale(1);
-          }
-        }
+@media (min-width: 1701px) {
+  .linktree-nav-shell {
+    transform: translateX(-50%) translateY(0) scale(1.5) !important;
+    transform-origin: top center !important;
+  }
+
+  .linktree-nav-shell.nav-hidden {
+    transform: translateX(-50%) translateY(-160%) scale(1.5) !important;
+  }
+
+  .gift-browser-frame,
+  .linktree-smart-frame,
+  .recipient-frame,
+  .personalize-frame {
+    transform: scale(1.5) !important;
+    transform-origin: top center !important;
+  }
+
+  .checkout-page {
+    background: #f3f3f1 !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  .checkout-frame {
+    position: relative !important;
+    transform: scale(1.5) !important;
+    transform-origin: top center !important;
+    background: #f3f3f1 !important;
+    align-items: flex-start !important;
+    overflow: visible !important;
+  }
+
+  .checkout-frame::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 760px !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    background: #ffffff !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .checkout-frame::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 760px !important;
+    top: 0 !important;
+    width: 1px !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    background: #dededb !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  .checkout-form-side {
+    position: relative !important;
+    z-index: 1 !important;
+    background: transparent !important;
+    min-height: 100vh !important;
+  }
+
+  .checkout-summary-side {
+    position: relative !important;
+    z-index: 1 !important;
+    background: #f3f3f1 !important;
+    border-left: 0 !important;
+    align-self: flex-start !important;
+    min-height: 100vh !important;
+  }
+
+  .checkout-summary-card {
+    position: sticky !important;
+    top: 72px !important;
+    align-self: flex-start !important;
+  }
+
+  .checkout-logo-image {
+    transform: scale(1.28) !important;
+    transform-origin: center center !important;
+  }
+
+  .landing-claim-section {
+    height: 46vh !important;
+    min-height: 46vh !important;
+    overflow: hidden !important;
+  }
+
+  .landing-claim-frame {
+    transform: translateY(4.5vh) scale(1.28) !important;
+    transform-origin: center center !important;
+  }
+
+  .landing-claim-title {
+    transform: scale(1.18) !important;
+    transform-origin: center center !important;
+  }
+
+  .landing-claim-form {
+    transform: scale(1.12) !important;
+    transform-origin: center center !important;
+  }
+
+  .landing-blue-dude {
+    transform: translateY(1.2vh) scale(1) !important;
+    transform-origin: bottom center !important;
+  }
+
+  .landing-purple-shape {
+    transform: translateY(-1.5vh) scale(1.12) !important;
+    transform-origin: center center !important;
+  }
+
+  .country-change-toast {
+    top: 135px !important;
+    font-size: 24px !important;
+    padding: 18px 30px !important;
+    border-radius: 999px !important;
+  }
+}
 
         @keyframes wordEnter {
           0% {
@@ -4726,39 +4954,39 @@ const handleCountryChange = (country: Country) => {
           }
         }
 
-        @keyframes carouselStep {
-          0% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 1)));
-          }
+@keyframes carouselStep {
+  0% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 1)));
+  }
 
-          22% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 1)));
-          }
+  22% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 1)));
+  }
 
-          32% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 2)));
-          }
+  32% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 2)));
+  }
 
-          54% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 2)));
-          }
+  54% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 2)));
+  }
 
-          64% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 3)));
-          }
+  64% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 3)));
+  }
 
-          86% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 3)));
-          }
+  86% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 3)));
+  }
 
-          96% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 4)));
-          }
+  96% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 4)));
+  }
 
-          100% {
-            transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 4)));
-          }
-        }
+  100% {
+    transform: translateY(calc(50vh - (var(--carousel-size) / 2) - ((var(--carousel-size) + var(--carousel-gap)) * 4)));
+  }
+}
           .landing-claim-section {
   position: relative;
   width: 100%;

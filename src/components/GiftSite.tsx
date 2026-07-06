@@ -468,6 +468,42 @@ export default function GiftSite({
 
   const [countryOpen, setCountryOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(initialCountry);
+useEffect(() => {
+  const countryFromPath = pathname?.split("/")[1]?.toUpperCase();
+
+  const nextCountry =
+    countries.find((country) => country.code === countryFromPath) ??
+    countries.find(
+      (country) =>
+        country.code.toLowerCase() === initialCountryCode.toLowerCase()
+    ) ??
+    countries[0];
+
+  setSelectedCountry(nextCountry);
+}, [pathname, initialCountryCode]);
+
+useEffect(() => {
+  if (pathname.includes("/how-it-works")) {
+    setActivePage("how");
+    setBackgroundPage("how");
+    return;
+  }
+
+  if (pathname.includes("/gift-tracker")) {
+    setActivePage("tracker");
+    setBackgroundPage("tracker");
+    return;
+  }
+
+  if (pathname.includes("/shop")) {
+    setActivePage("wall");
+    setBackgroundPage("wall");
+    return;
+  }
+
+  setActivePage(initialPage);
+  setBackgroundPage(initialPage);
+}, [pathname, initialPage]);
   const [countryToastVisible, setCountryToastVisible] = useState(false);
 
   const [selectedAmount, setSelectedAmount] = useState<number | null>(
@@ -527,40 +563,62 @@ export default function GiftSite({
   const howPath = `/${selectedCountrySlug}/how-it-works`;
   const trackerPath = `/${selectedCountrySlug}/gift-tracker`;
 
-  const getCountryPath = (country: Country) => {
-    const countrySlug = country.code.toLowerCase();
-    const amount = selectedAmountObject?.value ?? selectedAmount ?? "";
+ const getCountryPath = (country: Country) => {
+  const countrySlug = country.code.toLowerCase();
+  const amount = selectedAmountObject?.value ?? selectedAmount ?? "";
 
-    if (activePage === "home") {
-      return `/${countrySlug}/home`;
-    }
+  if (pathname.includes("/how-it-works")) {
+    return `/${countrySlug}/how-it-works`;
+  }
 
-    if (activePage === "wall") {
-      return `/${countrySlug}/shop`;
-    }
+  if (pathname.includes("/gift-tracker")) {
+    return `/${countrySlug}/gift-tracker`;
+  }
 
-    if (activePage === "how") {
-      return `/${countrySlug}/how-it-works`;
-    }
+  if (pathname.includes("/shop") || activePage === "wall") {
+    return `/${countrySlug}/shop`;
+  }
 
-    if (activePage === "tracker") {
-      return `/${countrySlug}/gift-tracker`;
-    }
+  if (pathname.includes("/home") || activePage === "home") {
+    return `/${countrySlug}/home`;
+  }
 
-    if (productStep === "recipient") {
-      return `/${countrySlug}/product/${selectedProductCard.id}/recipient${amount ? `?amount=${amount}` : ""}`;
-    }
+  if (activePage === "how") {
+    return `/${countrySlug}/how-it-works`;
+  }
 
-    if (productStep === "personalize") {
-      return `/${countrySlug}/product/${selectedProductCard.id}/personalize/${recipientType}${amount ? `?amount=${amount}${creatorQueryParam ?? ""}${recipientQueryParam ?? ""}` : ""}`;
-    }
+  if (activePage === "tracker") {
+    return `/${countrySlug}/gift-tracker`;
+  }
 
-    if (productStep === "checkout") {
-      return `/${countrySlug}/product/${selectedProductCard.id}/checkout${amount ? `?amount=${amount}&type=${recipientType}${creatorQueryParam ?? ""}${recipientQueryParam ?? ""}${personalizeQueryParam ?? ""}` : ""}`;
-    }
+  if (productStep === "recipient") {
+    return `/${countrySlug}/product/${selectedProductCard.id}/recipient${
+      amount ? `?amount=${amount}` : ""
+    }`;
+  }
 
-    return `/${countrySlug}/product/${selectedProductCard.id}`;
-  };
+  if (productStep === "personalize") {
+    return `/${countrySlug}/product/${selectedProductCard.id}/personalize/${recipientType}${
+      amount
+        ? `?amount=${amount}${creatorQueryParam ?? ""}${
+            recipientQueryParam ?? ""
+          }`
+        : ""
+    }`;
+  }
+
+  if (productStep === "checkout") {
+    return `/${countrySlug}/product/${selectedProductCard.id}/checkout${
+      amount
+        ? `?amount=${amount}&type=${recipientType}${creatorQueryParam ?? ""}${
+            recipientQueryParam ?? ""
+          }${personalizeQueryParam ?? ""}`
+        : ""
+    }`;
+  }
+
+  return `/${countrySlug}/product/${selectedProductCard.id}`;
+};
 
   const productHeroImage = selectedProductCard.image;
   const checkoutProductImage = selectedProductCard.image;
@@ -950,11 +1008,19 @@ const goToGiftTracker = () => {
   };
 
 const handleCountryChange = (country: Country) => {
-  const nextPath = getCountryPath(country);
+  const countrySlug = country.code.toLowerCase();
+  const currentPath = pathname || `/${selectedCountrySlug}/home`;
+  const currentQuery =
+    typeof window !== "undefined" ? window.location.search : "";
 
+  const nextPath = currentPath.match(/^\/[a-z]{2}(\/|$)/i)
+    ? currentPath.replace(/^\/[a-z]{2}/i, `/${countrySlug}`)
+    : getCountryPath(country);
+
+  setSelectedCountry(country);
   setCountryOpen(false);
   setRecipientPhone("");
-  navigateTo(nextPath);
+  router.push(`${nextPath}${currentQuery}`);
 
   window.setTimeout(() => {
     triggerCountryToast(country);

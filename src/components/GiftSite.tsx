@@ -1066,8 +1066,6 @@ const handleCountryChange = (country: Country) => {
 const handleValueContinue = () => {
   if (!selectedAmount) return;
 
-  setProductStep("recipient");
-
   navigateTo(
     `/${selectedCountrySlug}/product/${selectedProductCard.id}/recipient?amount=${selectedAmount}`
   );

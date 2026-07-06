@@ -4817,7 +4817,8 @@ a {
 
   .checkout-frame {
     position: relative !important;
-    transform: scale(1.5) !important;
+    transform: none !important;
+    zoom: 1.5;
     transform-origin: top center !important;
     background: #f3f3f1 !important;
     align-items: flex-start !important;

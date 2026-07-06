@@ -29,6 +29,16 @@ export async function POST(request: Request) {
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+    const successUrl =
+      typeof body.successUrl === "string" && body.successUrl.startsWith(siteUrl)
+        ? `${body.successUrl}?session_id={CHECKOUT_SESSION_ID}`
+        : `${siteUrl}/us/thank-you?session_id={CHECKOUT_SESSION_ID}`;
+
+const cancelUrl =
+  typeof body.returnUrl === "string" && body.returnUrl.startsWith(siteUrl)
+    ? body.returnUrl
+    : `${siteUrl}/us/home?checkout=cancelled`;
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: body.checkoutEmail,
@@ -57,15 +67,8 @@ export async function POST(request: Request) {
         creatorHandle: body.creatorHandle ?? "",
         personalMessage: body.personalMessage ?? "",
       },
-      success_url:
-        typeof body.successUrl === "string" && body.successUrl.startsWith(siteUrl)
-          ? `${body.successUrl}?session_id={CHECKOUT_SESSION_ID}`
-          : `${siteUrl}/us/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-
-      cancel_url:
-        typeof body.returnUrl === "string" && body.returnUrl.startsWith(siteUrl)
-          ? body.returnUrl
-          : `${siteUrl}/us/home?checkout=cancelled`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     });
 
     return NextResponse.json({ url: session.url });

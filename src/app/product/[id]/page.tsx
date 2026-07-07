@@ -1,20 +1,17 @@
+"use client";
+
 import GiftSite from "@/components/GiftSite";
+import { useParams } from "next/navigation";
 
-type ProductPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
-export default async function ProductPage({ params }: ProductPageProps) {
-  const { id } = await params;
+export default function ProductPage() {
+  const params = useParams<{ country: string; id: string }>();
 
   return (
     <GiftSite
-      key={`us-product-${id}`}
       initialPage="product"
-      initialProductId={id}
-      initialCountryCode="US"
+      initialCountryCode={params.country ?? "us"}
+      initialProductId={params.id ?? "linktree"}
+      initialProductStep="value"
     />
   );
 }

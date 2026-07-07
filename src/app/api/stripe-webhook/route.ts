@@ -95,60 +95,39 @@ const sendGiftCardEmail = async (order: {
     ? `${currencyPrefix}${Number(order.gift_amount).toFixed(2)}`
     : "your gift card";
 
+  const isGiftForSomeone = order.recipient_type === "someone";
   const recipientName = order.recipient_name?.trim() || "there";
   const productTitle = order.product_title || "Linktree eGift Card";
 
-  const subject = `Your ${productTitle} is ready`;
+  const subject = isGiftForSomeone
+    ? `Someone gifted you a ${productTitle}`
+    : `Your ${productTitle} is ready`;
+
+  const heroTitle = isGiftForSomeone
+    ? "Someone gifted you a gift card"
+    : "Your gift card is ready";
+
+  const introCopy = isGiftForSomeone
+    ? `Someone has gifted you a ${giftValue} ${productTitle}.`
+    : `Your ${giftValue} gift card has been created successfully.`;
 
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
     /\/$/,
     ""
   );
 
-  const productImageMap: Record<string, string> = {
-    amc: "/images/amc.png",
-    doordash: "/images/doordash.png",
-    instacart: "/images/instacart.png",
-    macys: "/images/macys.png",
-    roblox: "/images/roblox.png",
-    target: "/images/target.png",
-    uber: "/images/uber.png",
-    linktree: "/images/linktree-card.png",
-  };
-
-  const productId = productTitle.toLowerCase().includes("macy")
-    ? "macys"
-    : productTitle.toLowerCase().includes("doordash")
-      ? "doordash"
-      : productTitle.toLowerCase().includes("roblox")
-        ? "roblox"
-        : productTitle.toLowerCase().includes("amc")
-          ? "amc"
-          : productTitle.toLowerCase().includes("target")
-            ? "target"
-            : productTitle.toLowerCase().includes("instacart")
-              ? "instacart"
-              : productTitle.toLowerCase().includes("uber")
-                ? "uber"
-                : "linktree";
-
-  const productImageUrl = `${siteUrl}${productImageMap[productId]}`;
-
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 32px; color: #111111;">
       <div style="background: #cbea19; border-radius: 28px; padding: 32px; text-align: center;">
-        <h1 style="margin: 0; font-size: 36px; line-height: 1; letter-spacing: -1.5px;">Your gift card is ready</h1>
+        <h1 style="margin: 0; font-size: 36px; line-height: 1; letter-spacing: -1.5px;">${heroTitle}</h1>
         <p style="font-size: 18px; font-weight: 700; margin: 18px 0 0;">${productTitle}</p>
       </div>
 
       <div style="background: #f7f7f4; border-radius: 24px; padding: 28px; margin-top: 24px;">
-        <div style="text-align: center; margin: 0 0 26px;">
-          <img src="${productImageUrl}" alt="${productTitle}" style="width: 260px; max-width: 100%; border-radius: 22px; display: inline-block;" />
-        </div>
 
         <p style="font-size: 16px; font-weight: 700; margin: 0 0 14px;">Hi ${recipientName},</p>
         <p style="font-size: 16px; line-height: 1.45; margin: 0 0 20px;">
-          Your ${giftValue} gift card has been created successfully.
+          ${introCopy}
         </p>
 
         <div style="background: #ffffff; border-radius: 18px; padding: 22px; margin: 22px 0;">
@@ -169,7 +148,7 @@ const sendGiftCardEmail = async (order: {
     </div>
   `;
 
-  const text = `Your gift card is ready\n\n${productTitle}\nValue: ${giftValue}\nGift code: ${order.gift_code}\n${order.personal_message ? `Message: ${order.personal_message}\n` : ""}`;
+  const text = `${heroTitle}\n\n${productTitle}\nValue: ${giftValue}\nGift code: ${order.gift_code}\n${order.personal_message ? `Message: ${order.personal_message}\n` : ""}`;
 
   console.log("Sending gift card email to:", deliveryEmail);
 

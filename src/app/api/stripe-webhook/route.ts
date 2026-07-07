@@ -1,12 +1,10 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const generateGiftCode = (productId?: string | null) => {
   const prefix = productId ? productId.slice(0, 4).toUpperCase() : "GIFT";
@@ -70,6 +68,7 @@ const sendGiftCardEmail = async (order: {
     throw new Error("Missing Resend API key.");
   }
 
+  const { Resend } = await import("resend");
   const resend = new Resend(resendApiKey);
 
   const deliveryEmail =

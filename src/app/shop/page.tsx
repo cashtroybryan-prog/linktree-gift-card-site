@@ -1,5 +1,11 @@
 import GiftSite from "@/components/GiftSite";
 
-export default function ShopPage() {
-  return <GiftSite key="shop-us" initialPage="wall" initialCountryCode="US" />;
+type ShopPageProps = {
+  params: {
+    country: string;
+  };
+};
+
+export default function ShopPage({ params }: ShopPageProps) {
+  return <GiftSite initialPage="wall" initialCountryCode={params.country} />;
 }

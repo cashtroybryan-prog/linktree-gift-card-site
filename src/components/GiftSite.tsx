@@ -286,22 +286,81 @@ const countries = [
 ];
 
 const creators = [
-  { handle: "@selenagomez", subtitle: "Music, beauty, and creator drops" },
-  { handle: "@charlidamelio", subtitle: "Lifestyle, dance, and fan favourites" },
-  { handle: "@mrbeast", subtitle: "Creator merch, videos, and campaigns" },
-  { handle: "@emmachamberlain", subtitle: "Coffee, style, and creator picks" },
-  { handle: "@dualipa", subtitle: "Music, merch, and exclusive moments" },
-  { handle: "@rarebeauty", subtitle: "Beauty, impact, and community" },
-  { handle: "@taylorswift", subtitle: "Music, eras, merch, and fan moments" },
-  { handle: "@billieeilish", subtitle: "Music, drops, and creator exclusives" },
-  { handle: "@kyliejenner", subtitle: "Beauty, lifestyle, and product drops" },
-  { handle: "@khaby.lame", subtitle: "Comedy, creator content, and socials" },
-  { handle: "@addisonre", subtitle: "Lifestyle, beauty, and creator picks" },
-  { handle: "@oliviarodrigo", subtitle: "Music, merch, and fan gifting" },
-  { handle: "@arianagrande", subtitle: "Music, beauty, and limited drops" },
-  { handle: "@ksi", subtitle: "Creator merch, music, and campaigns" },
-  { handle: "@ninja", subtitle: "Gaming, streaming, and fan rewards" },
-  { handle: "@pokimane", subtitle: "Gaming, creator drops, and community" },
+  {
+    handle: "@selenagomez",
+    subtitle: "Music, beauty, and creator drops",
+    image: "/images/selena-gomez.png",
+  },
+  {
+    handle: "@charlidamelio",
+    subtitle: "Lifestyle, dance, and fan favourites",
+    image: "/images/charli-d-amelio.png",
+  },
+  {
+    handle: "@mrbeast",
+    subtitle: "Creator merch, videos, and campaigns",
+    image: "/images/mr-beast.png",
+  },
+  {
+    handle: "@emmachamberlain",
+    subtitle: "Coffee, style, and creator picks",
+    image: "/images/emma-chamberlain.png",
+  },
+  {
+    handle: "@dualipa",
+    subtitle: "Music, merch, and exclusive moments",
+    image: "/images/dua-lipa.png",
+  },
+  {
+    handle: "@taylorswift",
+    subtitle: "Music, eras, merch, and fan moments",
+    image: "/images/taylor-swift.png",
+  },
+  {
+    handle: "@billieeilish",
+    subtitle: "Music, drops, and creator exclusives",
+    image: "/images/billie-eilish.png",
+  },
+  {
+    handle: "@kyliejenner",
+    subtitle: "Beauty, lifestyle, and product drops",
+    image: "/images/kylie-jenner.png",
+  },
+  {
+    handle: "@khaby.lame",
+    subtitle: "Comedy, creator content, and socials",
+    image: "/images/khaby-lame.png",
+  },
+  {
+    handle: "@addisonrae",
+    subtitle: "Lifestyle, beauty, and creator picks",
+    image: "/images/addison-rae.png",
+  },
+  {
+    handle: "@oliviarodrigo",
+    subtitle: "Music, merch, and fan gifting",
+    image: "/images/olivia-rodrigo.png",
+  },
+  {
+    handle: "@arianagrande",
+    subtitle: "Music, beauty, and limited drops",
+    image: "/images/ariana-grande.png",
+  },
+  {
+    handle: "@ksi",
+    subtitle: "Creator merch, music, and campaigns",
+    image: "/images/ksi.png",
+  },
+  {
+    handle: "@ninja",
+    subtitle: "Gaming, streaming, and fan rewards",
+    image: "/images/ninja.png",
+  },
+  {
+    handle: "@pokimane",
+    subtitle: "Gaming, creator drops, and community",
+    image: "/images/poki.png",
+  },
 ];
 
 const mediaCards = [
@@ -381,7 +440,7 @@ export default function GiftSite({
   initialCountryCode = "US",
   initialProductId,
   initialProductStep = "value",
-  initialRecipientType = "someone",
+initialRecipientType = "creator",
   initialAmount = null,
   initialCreatorHandle,
   initialRecipientName = "",
@@ -514,7 +573,9 @@ useEffect(() => {
   const [recipientType, setRecipientType] =
     useState<RecipientType>(initialRecipientType);
   const [amountDropdownOpen, setAmountDropdownOpen] = useState(false);
-  const [creatorPickerOpen, setCreatorPickerOpen] = useState(false);
+const [creatorPickerOpen, setCreatorPickerOpen] = useState(
+  initialRecipientType === "creator" && initialCreator === null
+);
   const [selectedCreator, setSelectedCreator] = useState<Creator | null>(
     initialCreator
   );
@@ -560,7 +621,9 @@ useEffect(() => {
   setUploadedMediaName(initialUploadedMediaName);
   setPersonalMessage(initialPersonalMessage);
   setAmountDropdownOpen(false);
-  setCreatorPickerOpen(false);
+setCreatorPickerOpen(
+  initialRecipientType === "creator" && initialCreator === null
+);
   resetScroll();
 }, [
   pathname,
@@ -944,7 +1007,7 @@ useEffect(() => {
   const resetProductFlow = () => {
     setSelectedAmount(null);
     setProductStep("value");
-    setRecipientType("someone");
+setRecipientType("creator");
     setAmountDropdownOpen(false);
     setCreatorPickerOpen(false);
     setSelectedCreator(null);
@@ -1812,31 +1875,31 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                     Who is this gift for?
                   </h3>
 
-                  <div className="recipient-toggle">
-                    <button
-                      type="button"
-                      className={recipientType === "creator" ? "is-active" : ""}
-                      onClick={() => handleRecipientTypeChange("creator")}
-                    >
-                      Linktree creator
-                    </button>
+<div className="recipient-toggle">
+  <button
+    type="button"
+    className={recipientType === "myself" ? "is-active" : ""}
+    onClick={() => handleRecipientTypeChange("myself")}
+  >
+    Myself
+  </button>
 
-                    <button
-                      type="button"
-                      className={recipientType === "someone" ? "is-active" : ""}
-                      onClick={() => handleRecipientTypeChange("someone")}
-                    >
-                      Someone else
-                    </button>
+  <button
+    type="button"
+    className={recipientType === "creator" ? "is-active" : ""}
+    onClick={() => handleRecipientTypeChange("creator")}
+  >
+    Linktree creator
+  </button>
 
-                    <button
-                      type="button"
-                      className={recipientType === "myself" ? "is-active" : ""}
-                      onClick={() => handleRecipientTypeChange("myself")}
-                    >
-                      Myself
-                    </button>
-                  </div>
+  <button
+    type="button"
+    className={recipientType === "someone" ? "is-active" : ""}
+    onClick={() => handleRecipientTypeChange("someone")}
+  >
+    Someone else
+  </button>
+</div>
 
                   {recipientType === "creator" && (
                     <>
@@ -1846,7 +1909,12 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                           className="creator-card"
                           onClick={() => setCreatorPickerOpen(true)}
                         >
-                          <div className="creator-avatar" />
+                          <img
+  className="creator-avatar"
+  src={selectedCreator.image}
+  alt={selectedCreator.handle}
+  draggable={false}
+/>
 
                           <div className="creator-copy">
                             <div className="creator-handle">
@@ -1859,6 +1927,11 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                             </div>
                           </div>
                         </button>
+                      )}
+                      {selectedCreator && (
+                        <div className="myself-card">
+                          This gift card will be sent to {selectedCreator.handle}.
+                        </div>
                       )}
 
                       {creatorPickerOpen && (
@@ -1887,7 +1960,12 @@ className={`main-shell h-screen w-full overflow-y-scroll overflow-x-hidden ${
                                     setCreatorPickerOpen(false);
                                   }}
                                 >
-                                  <div className="creator-list-avatar" />
+<img
+  className="creator-list-avatar"
+  src={creator.image}
+  alt={creator.handle}
+  draggable={false}
+/>
 
                                   <div className="creator-list-copy">
                                     <div>{creator.handle}</div>
@@ -4188,33 +4266,37 @@ a {
           letter-spacing: -2px;
         }
 
-        .recipient-toggle {
-          width: 679px;
-          height: 76px;
-          border: 2px solid #111111;
-          border-radius: 999px;
-          padding: 6px;
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 6px;
-          background: transparent;
-        }
+.recipient-toggle {
+  width: 679px;
+  height: 76px;
+  border: 2px solid #111111;
+  border-radius: 999px;
+  padding: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 0;
+  background: transparent;
+}
 
-        .recipient-toggle button {
-          border: 0;
-          border-radius: 999px;
-          background: transparent;
-          color: #000000;
-          font-size: 20px;
-          font-weight: 900;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          white-space: nowrap;
-          letter-spacing: -0.45px;
-        }
+.recipient-toggle button {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: -0.45px;
+}
 
         .recipient-toggle button.is-active {
           background: #cbe534;
@@ -4257,6 +4339,10 @@ a {
           background: #ececea;
           border: 2px solid #dededb;
           flex-shrink: 0;
+          object-fit: cover;
+object-position: center;
+display: block;
+flex-shrink: 0;
         }
 
         .creator-copy {
@@ -4377,6 +4463,10 @@ a {
           border-radius: 999px;
           background: #e5e5e2;
           border: 2px solid #d7d7d4;
+          object-fit: cover;
+object-position: center;
+display: block;
+flex-shrink: 0;
         }
 
         .creator-list-copy div {

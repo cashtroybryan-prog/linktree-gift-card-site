@@ -10085,6 +10085,617 @@ top: max(
     box-shadow: none !important;
   }
 }
+  /* =========================================================
+   FINAL MOBILE HOW IT WORKS PAGE
+   Desktop remains untouched.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .main-shell:has(.how-it-works-page) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background: #870019 !important;
+  }
+
+  .page-content:has(.how-it-works-page) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #870019 !important;
+  }
+
+  .how-it-works-page {
+    display: block !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+
+    padding:
+      calc(
+        max(
+            52px,
+            calc(env(safe-area-inset-top, 0px) + 12px)
+          ) + 24vw
+      )
+      5vw
+      18vw !important;
+
+    margin: 0 !important;
+    overflow: visible !important;
+    background: #870019 !important;
+    color: #f7b9dc !important;
+  }
+
+  .how-it-works-frame {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  .how-it-works-frame h1 {
+    width: 100% !important;
+    margin: 0 0 10vw !important;
+
+    color: #f7b9dc !important;
+    font-size: 13vw !important;
+    font-weight: 900 !important;
+    line-height: 0.92 !important;
+    letter-spacing: -0.5vw !important;
+    text-align: center !important;
+  }
+
+  .how-faq-list {
+    display: flex !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 4vw !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .how-faq-item {
+    width: 100% !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 7vw !important;
+
+    background: #680014 !important;
+    color: #f7b9dc !important;
+
+    overflow: hidden !important;
+    box-shadow: none !important;
+  }
+
+  .how-faq-item summary {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 4vw !important;
+
+    width: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 6.5vw 7vw !important;
+
+    color: #f7b9dc !important;
+    font-size: 6.2vw !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.15vw !important;
+
+    cursor: pointer !important;
+    list-style: none !important;
+  }
+
+  .how-faq-item summary::-webkit-details-marker {
+    display: none !important;
+  }
+
+  .how-faq-item summary > span:first-child {
+    min-width: 0 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .how-faq-icon {
+    display: flex !important;
+    width: 7vw !important;
+    height: 7vw !important;
+    flex: 0 0 7vw !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: #f7b9dc !important;
+    font-size: 5vw !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+
+    transition: transform 180ms ease !important;
+  }
+
+  .how-faq-item[open] .how-faq-icon {
+    transform: rotate(180deg) !important;
+  }
+
+  .how-faq-item[open] summary {
+    padding-bottom: 3.5vw !important;
+  }
+
+  .how-faq-item p {
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 7vw 7vw !important;
+
+    color: #ffd6ea !important;
+    font-size: 4.35vw !important;
+    font-weight: 650 !important;
+    line-height: 1.42 !important;
+    letter-spacing: -0.04vw !important;
+
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+}
+  /* =========================================================
+   FINAL MOBILE GIFT TRACKER PAGE
+   Desktop remains completely untouched.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .gift-tracker-page {
+    display: block !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+
+    padding:
+      calc(
+        max(
+            52px,
+            calc(env(safe-area-inset-top, 0px) + 12px)
+          ) + 22vw
+      )
+      5vw
+      16vw !important;
+
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+
+    background:
+      radial-gradient(
+        circle at 15% 18%,
+        rgba(255, 255, 255, 0.34),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at 85% 15%,
+        rgba(255, 255, 255, 0.24),
+        transparent 32%
+      ),
+      #e9b6e8 !important;
+
+    color: #1f2333 !important;
+  }
+
+  .gift-tracker-hero {
+    display: flex !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 6vw !important;
+
+    transform: none !important;
+  }
+
+  /* CHAT CARD */
+
+  .gift-tracker-chat-card {
+    display: flex !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 4.5vw 4vw 5vw !important;
+
+    border-radius: 7vw !important;
+    background: #ffffff !important;
+
+    box-shadow: 0 5vw 14vw rgba(53, 21, 64, 0.14) !important;
+
+    overflow: hidden !important;
+  }
+
+  .tracker-chat-topbar {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 2.5vw !important;
+  }
+
+  .tracker-chat-menu {
+    font-size: 6vw !important;
+    line-height: 1 !important;
+  }
+
+  .tracker-chat-name {
+    display: flex !important;
+    min-width: 0 !important;
+    align-items: center !important;
+    gap: 2vw !important;
+    margin: 0 !important;
+
+    font-size: 4vw !important;
+    font-weight: 900 !important;
+  }
+
+  .tracker-chat-avatar {
+    width: 8vw !important;
+    height: 8vw !important;
+    flex: 0 0 8vw !important;
+    font-size: 4vw !important;
+  }
+
+  .tracker-chat-topbar button {
+    width: auto !important;
+    max-width: 25vw !important;
+    height: 9vw !important;
+    min-width: 0 !important;
+
+    padding: 0 3vw !important;
+
+    border: 0.3vw solid #e4e4e4 !important;
+    border-radius: 2.5vw !important;
+
+    background: #ffffff !important;
+    color: #8d8d8d !important;
+
+    font-size: 3vw !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .tracker-chat-intro {
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 12vw auto 9vw !important;
+    padding: 0 3vw !important;
+
+    text-align: center !important;
+  }
+
+  .tracker-chat-big-avatar {
+    width: 18vw !important;
+    height: 18vw !important;
+
+    margin: 0 auto 4vw !important;
+
+    font-size: 8vw !important;
+  }
+
+  .tracker-chat-intro h2 {
+    margin: 0 0 3vw !important;
+
+    color: #1f2333 !important;
+    font-size: 8vw !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.2vw !important;
+  }
+
+  .tracker-chat-intro p {
+    width: 100% !important;
+    margin: 0 !important;
+
+    color: #515563 !important;
+    font-size: 4vw !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+
+    overflow-wrap: anywhere !important;
+  }
+
+  .tracker-chat-date {
+    margin: 0 auto 8vw !important;
+
+    color: #999999 !important;
+    font-size: 3.5vw !important;
+    font-weight: 850 !important;
+  }
+
+  .tracker-chat-message-row {
+    display: grid !important;
+    grid-template-columns: 8vw minmax(0, 1fr) !important;
+    align-items: start !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    gap: 3vw !important;
+    margin: 0 !important;
+    padding: 0 1vw !important;
+  }
+
+  .tracker-chat-message-row > div {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .tracker-chat-small-avatar {
+    width: 8vw !important;
+    height: 8vw !important;
+    flex: 0 0 8vw !important;
+
+    font-size: 4vw !important;
+  }
+
+  .tracker-chat-question {
+    width: 100% !important;
+    margin: 0 0 2.5vw !important;
+
+    color: #242838 !important;
+    font-size: 4vw !important;
+    font-weight: 900 !important;
+    line-height: 1.25 !important;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .tracker-chat-bubble {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+
+    color: #242838 !important;
+    font-size: 3.8vw !important;
+    font-weight: 750 !important;
+    line-height: 1.35 !important;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .tracker-chat-input-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 10vw !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 13vw !important;
+
+    margin: 10vw 0 0 !important;
+    padding: 1.5vw 1.5vw 1.5vw 4vw !important;
+
+    border: 0.3vw solid #d4d4d4 !important;
+    border-radius: 4vw !important;
+
+    background: #ffffff !important;
+  }
+
+  .tracker-chat-input-row input {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 10vw !important;
+
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+
+    background: transparent !important;
+    color: #1f2333 !important;
+
+    font-size: 16px !important;
+    font-weight: 750 !important;
+  }
+
+  .tracker-chat-input-row button {
+    width: 9vw !important;
+    height: 9vw !important;
+
+    border: 0 !important;
+    border-radius: 999px !important;
+
+    background: #777777 !important;
+    color: #ffffff !important;
+
+    font-size: 4vw !important;
+    font-weight: 900 !important;
+  }
+
+  /* SEARCH AND SUPPORT CARD */
+
+  .gift-tracker-help-card {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 8vw 5vw !important;
+
+    border-radius: 7vw !important;
+    background: #ffffff !important;
+
+    text-align: center !important;
+
+    box-shadow: 0 5vw 14vw rgba(53, 21, 64, 0.14) !important;
+  }
+
+  .tracker-eyebrow {
+    margin: 0 0 3vw !important;
+
+    font-size: 3.1vw !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .gift-tracker-help-card h1 {
+    margin: 0 !important;
+
+    color: #1f2333 !important;
+    font-size: 10vw !important;
+    font-weight: 950 !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.3vw !important;
+  }
+
+  .tracker-subtitle {
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 4vw auto 6vw !important;
+
+    color: #1f2333 !important;
+    font-size: 4vw !important;
+    font-weight: 750 !important;
+    line-height: 1.3 !important;
+  }
+
+.tracker-search-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+
+  margin: 0 auto 8vw !important;
+  padding: 4vw !important;
+  gap: 3vw !important;
+
+  border-radius: 6vw !important;
+  background: #f6f6f3 !important;
+  box-sizing: border-box !important;
+}
+
+.tracker-search-bar button {
+  display: flex !important;
+  width: 100% !important;
+  height: 13vw !important;
+  min-height: 52px !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 5vw !important;
+
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  background: #1f2333 !important;
+  color: #ffffff !important;
+
+  font-size: 4vw !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+    
+  .tracker-search-bar button {
+    width: 100% !important;
+    height: 12vw !important;
+
+    padding: 0 5vw !important;
+
+    border: 0 !important;
+    border-radius: 999px !important;
+
+    background: #1f2333 !important;
+    color: #ffffff !important;
+
+    font-size: 4vw !important;
+    font-weight: 950 !important;
+  }
+
+  .gift-tracker-help-card h2,
+  .tracker-complaint-card h3 {
+    margin: 0 0 5vw !important;
+
+    color: #1f2333 !important;
+    font-size: 6vw !important;
+    font-weight: 950 !important;
+    line-height: 1.05 !important;
+  }
+
+  .tracker-topic-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+
+    width: 100% !important;
+    gap: 3vw !important;
+    margin: 0 0 8vw !important;
+  }
+
+  .tracker-topic-grid button {
+    width: 100% !important;
+    min-height: 18vw !important;
+
+    padding: 4vw !important;
+
+    border: 0 !important;
+    border-radius: 5vw !important;
+
+    background: #ffffff !important;
+    color: #e03d5d !important;
+
+    box-shadow: 0 3vw 8vw rgba(44, 22, 54, 0.11) !important;
+
+    font-size: 4vw !important;
+    font-weight: 950 !important;
+    line-height: 1.15 !important;
+  }
+
+  .tracker-complaint-card {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .tracker-complaint-card button {
+    width: 100% !important;
+    height: 12vw !important;
+
+    padding: 0 5vw !important;
+    border-radius: 999px !important;
+
+    font-size: 4vw !important;
+  }
+
+  .tracker-complaint-card a {
+    display: block !important;
+    margin-top: 4vw !important;
+
+    font-size: 3.8vw !important;
+    font-weight: 950 !important;
+  }
+}
       `}</style>
     </main>
   );

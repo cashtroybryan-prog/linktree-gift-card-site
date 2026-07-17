@@ -45,7 +45,10 @@ export default function ThankYouPage() {
 
     const fetchOrder = async () => {
       try {
-        const response = await fetch(`/api/orders/${encodeURIComponent(sessionId)}`);
+        const response = await fetch(
+          `/api/orders/${encodeURIComponent(sessionId)}`
+        );
+
         const data = await response.json();
 
         if (!response.ok) {
@@ -76,77 +79,311 @@ export default function ThankYouPage() {
 
   return (
     <main
-      className="min-h-screen bg-[#cbea19] flex items-center justify-center px-6 py-12 text-center"
+      className="
+        flex
+        min-h-[100dvh]
+        w-full
+        items-start
+        justify-center
+        overflow-x-hidden
+        bg-[#cbea19]
+        px-3
+        py-3
+        text-center
+        sm:px-5
+        sm:py-6
+        md:items-center
+        md:px-6
+        md:py-12
+      "
       style={{ fontFamily: '"Link Sans", "Inter", Arial, sans-serif' }}
     >
-      <div className="w-full max-w-[760px] rounded-[42px] bg-white px-10 py-14 shadow-[0_24px_90px_rgba(0,0,0,0.16)]">
+      <div
+        className="
+          w-full
+          max-w-[760px]
+          overflow-hidden
+          rounded-[28px]
+          bg-white
+          px-5
+          py-8
+          shadow-[0_24px_90px_rgba(0,0,0,0.16)]
+          sm:rounded-[34px]
+          sm:px-8
+          sm:py-10
+          md:rounded-[42px]
+          md:px-10
+          md:py-14
+        "
+      >
         <img
           src="/images/linktree-logo.png"
           alt="Linktree"
-          className="mx-auto mb-10 h-auto w-[180px]"
+          className="
+            mx-auto
+            mb-7
+            h-auto
+            w-[145px]
+            sm:mb-8
+            sm:w-[165px]
+            md:mb-10
+            md:w-[180px]
+          "
         />
 
-        <div className="mx-auto mb-8 flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[#ccff00] text-[34px] font-black text-black">
+        <div
+          className="
+            mx-auto
+            mb-6
+            flex
+            h-[64px]
+            w-[64px]
+            items-center
+            justify-center
+            rounded-full
+            bg-[#ccff00]
+            text-[30px]
+            font-black
+            text-black
+            sm:mb-7
+            sm:h-[70px]
+            sm:w-[70px]
+            sm:text-[32px]
+            md:mb-8
+            md:h-[74px]
+            md:w-[74px]
+            md:text-[34px]
+          "
+        >
           ✓
         </div>
 
-        <h1 className="text-[56px] leading-[0.9] font-black tracking-[-2.5px] text-black">
+        <h1
+          className="
+            mx-auto
+            max-w-[620px]
+            text-[40px]
+            leading-[0.9]
+            font-black
+            tracking-[-1.8px]
+            text-black
+            sm:text-[48px]
+            sm:tracking-[-2.1px]
+            md:text-[56px]
+            md:tracking-[-2.5px]
+          "
+        >
           Thank you for your purchase
         </h1>
 
         {isLoading && (
-          <p className="mx-auto mt-6 max-w-[560px] text-[20px] leading-[1.25] font-bold text-[#555555]">
+          <p
+            className="
+              mx-auto
+              mt-5
+              max-w-[560px]
+              text-[17px]
+              leading-[1.25]
+              font-bold
+              text-[#555555]
+              sm:mt-6
+              sm:text-[19px]
+              md:text-[20px]
+            "
+          >
             Loading your gift card details...
           </p>
         )}
 
         {!isLoading && error && (
           <>
-            <p className="mx-auto mt-6 max-w-[560px] text-[20px] leading-[1.25] font-bold text-[#555555]">
-              Your payment was successful, but your order details are still loading.
+            <p
+              className="
+                mx-auto
+                mt-5
+                max-w-[560px]
+                text-[17px]
+                leading-[1.25]
+                font-bold
+                text-[#555555]
+                sm:mt-6
+                sm:text-[19px]
+                md:text-[20px]
+              "
+            >
+              Your payment was successful, but your order details are still
+              loading.
             </p>
-            <p className="mt-4 text-[15px] font-bold text-[#777777]">{error}</p>
+
+            <p className="mt-4 text-[14px] font-bold text-[#777777] sm:text-[15px]">
+              {error}
+            </p>
           </>
         )}
 
         {!isLoading && order && (
           <>
-            <p className="mx-auto mt-6 max-w-[560px] text-[20px] leading-[1.25] font-bold text-[#555555]">
-              Your payment was successful. Your gift card details will be sent by email.
+            <p
+              className="
+                mx-auto
+                mt-5
+                max-w-[560px]
+                text-[17px]
+                leading-[1.25]
+                font-bold
+                text-[#555555]
+                sm:mt-6
+                sm:text-[19px]
+                md:text-[20px]
+              "
+            >
+              Your payment was successful. Your gift card details will be sent
+              by email.
             </p>
 
-            <div className="mx-auto mt-9 max-w-[560px] rounded-[30px] border border-[#e5e5e5] bg-[#f7f7f4] p-7 text-left">
-              <div className="mb-5 flex items-start justify-between gap-5">
-                <div>
-                  <p className="text-[13px] font-black uppercase tracking-[0.12em] text-[#777777]">
+            <div
+              className="
+                mx-auto
+                mt-7
+                w-full
+                max-w-[560px]
+                rounded-[24px]
+                border
+                border-[#e5e5e5]
+                bg-[#f7f7f4]
+                p-5
+                text-left
+                sm:mt-9
+                sm:rounded-[30px]
+                sm:p-7
+              "
+            >
+              <div
+                className="
+                  mb-5
+                  grid
+                  min-w-0
+                  grid-cols-[minmax(0,1fr)_auto]
+                  items-start
+                  gap-3
+                  sm:gap-5
+                "
+              >
+                <div className="min-w-0">
+                  <p
+                    className="
+                      m-0
+                      text-[12px]
+                      font-black
+                      uppercase
+                      tracking-[0.12em]
+                      text-[#777777]
+                      sm:text-[13px]
+                    "
+                  >
                     Gift card
                   </p>
-                  <h2 className="mt-1 text-[26px] leading-[1] font-black text-black">
+
+                  <h2
+                    className="
+                      mt-1
+                      min-w-0
+                      text-[22px]
+                      leading-[0.98]
+                      font-black
+                      tracking-[-0.5px]
+                      text-black
+                      sm:text-[24px]
+                      md:text-[26px]
+                    "
+                    style={{
+                      overflowWrap: "anywhere",
+                      wordBreak: "break-word",
+                    }}
+                  >
                     {order.product_title ?? "Linktree eGift Card"}
                   </h2>
                 </div>
 
                 {giftValue && (
-                  <div className="rounded-full bg-[#ccff00] px-5 py-3 text-[18px] font-black text-black">
+                  <div
+                    className="
+                      flex-shrink-0
+                      whitespace-nowrap
+                      rounded-full
+                      bg-[#ccff00]
+                      px-4
+                      py-2.5
+                      text-[16px]
+                      leading-none
+                      font-black
+                      text-black
+                      sm:px-5
+                      sm:py-3
+                      sm:text-[18px]
+                    "
+                  >
                     {giftValue}
                   </div>
                 )}
               </div>
 
-              <div className="rounded-[22px] bg-white px-5 py-5">
-                <p className="text-[13px] font-black uppercase tracking-[0.12em] text-[#777777]">
+              <div className="rounded-[18px] bg-white px-5 py-5 sm:rounded-[22px]">
+                <p
+                  className="
+                    m-0
+                    text-[12px]
+                    font-black
+                    uppercase
+                    tracking-[0.12em]
+                    text-[#777777]
+                    sm:text-[13px]
+                  "
+                >
                   Delivery
                 </p>
-                <p className="mt-2 text-[22px] leading-[1.1] font-black tracking-[-0.4px] text-black">
+
+                <p
+                  className="
+                    mt-2
+                    text-[19px]
+                    leading-[1.08]
+                    font-black
+                    tracking-[-0.4px]
+                    text-black
+                    sm:text-[21px]
+                    md:text-[22px]
+                  "
+                >
                   Your gift card code will be sent by email.
                 </p>
               </div>
 
-              <div className="mt-5 grid gap-3 text-[16px] font-bold text-[#555555]">
-                <p>
-                  <span className="text-black">Delivery:</span> {deliveryEmail}
+              <div
+                className="
+                  mt-5
+                  grid
+                  min-w-0
+                  gap-3
+                  text-[15px]
+                  leading-[1.3]
+                  font-bold
+                  text-[#555555]
+                  sm:text-[16px]
+                "
+              >
+                <p
+                  className="m-0 min-w-0"
+                  style={{
+                    overflowWrap: "anywhere",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  <span className="text-black">Delivery:</span>{" "}
+                  {deliveryEmail}
                 </p>
-                <p>
+
+                <p className="m-0">
                   <span className="text-black">Status:</span>{" "}
                   {order.fulfilment_status ?? "created"}
                 </p>
@@ -157,7 +394,26 @@ export default function ThankYouPage() {
 
         <a
           href={`/${country}/home`}
-          className="mx-auto mt-9 flex h-[58px] w-fit items-center justify-center rounded-full bg-black px-10 text-[18px] font-black text-white no-underline"
+          className="
+            mx-auto
+            mt-7
+            flex
+            h-[54px]
+            w-full
+            max-w-[250px]
+            items-center
+            justify-center
+            rounded-full
+            bg-black
+            px-8
+            text-[17px]
+            font-black
+            text-white
+            no-underline
+            sm:mt-9
+            sm:h-[58px]
+            sm:text-[18px]
+          "
         >
           Go home
         </a>

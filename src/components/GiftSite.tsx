@@ -10617,7 +10617,7 @@ top: max(
   line-height: 1 !important;
   box-sizing: border-box !important;
 }
-    
+
   .tracker-search-bar button {
     width: 100% !important;
     height: 12vw !important;
@@ -10694,6 +10694,30 @@ top: max(
 
     font-size: 3.8vw !important;
     font-weight: 950 !important;
+  }
+}
+  /* =========================================================
+   MOBILE CARD TITLE DESCENDER FIX
+   Prevents g, y, p, q and j from being clipped.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .gift-browser-page .gift-card-title {
+    height: 1.55em !important;
+    padding-bottom: 0.3em !important;
+
+    font-size: clamp(13px, 3.5vw, 18px) !important;
+    line-height: 1.25 !important;
+
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .gift-browser-page .gift-card-range {
+    top: calc(
+      var(--mobile-card-image-height) + 10.2vw
+    ) !important;
   }
 }
       `}</style>

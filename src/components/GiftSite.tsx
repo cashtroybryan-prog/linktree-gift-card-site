@@ -251,7 +251,7 @@ const targetMuscleChefProduct: BrowserCard = {
   isNew: false,
   checkoutProductId: "target",
   description:
-    "Gift them a Target eGift Card inspired by one of my current fitness favourites, the My Muscle Chef Chipotle Chicken Burrito Bowl. They can use it on this pick or choose something else they’ll love at Target.",
+    "Gift anyone a Target eGift Card inspired by one of my current fitness favorites, the My Muscle Chef Chipotle Chicken Burrito Bowl. They can use it on this pick or choose something else they’ll love at Target.",
 };
 
 const allProductCards: BrowserCard[] = [

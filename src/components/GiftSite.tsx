@@ -12,6 +12,7 @@ type BrowserCard = {
   category: string;
   isNew: boolean;
   description: string;
+  checkoutProductId?: string;
 };
 
 const categoryImages = [
@@ -240,6 +241,25 @@ const browserCards: BrowserCard[] = [
   },
 ];
 
+const targetMuscleChefProduct: BrowserCard = {
+  id: "target-muscle-chef",
+  title: "Target eGift Card",
+  fullTitle: "Target eGift Card",
+  image: "/images/target-muscle-chef-card.png",
+  tileImage: "/images/target-muscle-chef-card.png",
+  category: "Retail",
+  isNew: false,
+  checkoutProductId: "target",
+  description:
+    "Gift them a Target eGift Card inspired by one of my current fitness favourites, the My Muscle Chef Chipotle Chicken Burrito Bowl. They can use it on this pick or choose something else they’ll love at Target.",
+};
+
+const allProductCards: BrowserCard[] = [
+  ...browserCards,
+  targetMuscleChefProduct,
+];
+
+
 const browserCategories = [
   "Smart Cards",
   "Groceries",
@@ -374,6 +394,17 @@ const creators = [
   },
 ];
 
+const targetMuscleChefCreator = {
+  handle: "@cashtroy.bryan",
+  subtitle: "",
+  image: "",
+};
+
+const allCreators = [
+  ...creators,
+  targetMuscleChefCreator,
+];
+
 const mediaCards = [
   "Season’s Greetings",
   "Dream Big",
@@ -495,11 +526,13 @@ initialRecipientType = "creator",
   }, [pathname]);
 
   const initialProduct =
-    browserCards.find((card) => card.id === initialProductId) ??
-    defaultLinktreeProduct;
+  allProductCards.find((card) => card.id === initialProductId) ??
+  defaultLinktreeProduct;
 
-  const initialCreator =
-    creators.find((creator) => creator.handle === initialCreatorHandle) ?? null;
+const initialCreator =
+  allCreators.find(
+    (creator) => creator.handle === initialCreatorHandle
+  ) ?? null;
 
   const initialCountry =
     countries.find(
@@ -774,6 +807,11 @@ setCreatorPickerOpen(
     return cards;
   }, [searchQuery, selectedCategories, sortMode]);
 
+  const availableCreators =
+  selectedProductCard.id === "target-muscle-chef"
+    ? [targetMuscleChefCreator]
+    : creators;
+  
   const selectedAmountObject =
     amounts.find((amount) => amount.value === selectedAmount) ??
     amounts[amounts.length - 1];
@@ -1216,8 +1254,10 @@ body: JSON.stringify({
                   ? "cad"
                   : "usd",
         country: selectedCountry.label,
-        productId: selectedProductCard.id,
-        productTitle: selectedProductCard.fullTitle,
+productId:
+  selectedProductCard.checkoutProductId ??
+  selectedProductCard.id,
+productTitle: selectedProductCard.fullTitle,
         recipientType,
         recipientName,
         recipientEmail,
@@ -2011,22 +2051,30 @@ body: JSON.stringify({
                           className="creator-card"
                           onClick={() => setCreatorPickerOpen(true)}
                         >
-                          <img
-  className="creator-avatar"
-  src={selectedCreator.image}
-  alt={selectedCreator.handle}
-  draggable={false}
-/>
+{selectedCreator.image ? (
+  <img
+    className="creator-avatar"
+    src={selectedCreator.image}
+    alt={selectedCreator.handle}
+    draggable={false}
+  />
+) : (
+  <span
+    className="creator-avatar"
+    aria-hidden="true"
+  />
+)}
 
                           <div className="creator-copy">
                             <div className="creator-handle">
                               {selectedCreator.handle}
                             </div>
 
-                            <div className="creator-subtext">
-                              Selected creator. Tap to choose a different
-                              creator.
-                            </div>
+{selectedCreator.handle !== "@cashtroy.bryan" && (
+  <div className="creator-subtext">
+    Selected creator. Tap to choose a different creator.
+  </div>
+)}
                           </div>
                         </button>
                       )}
@@ -2046,7 +2094,7 @@ body: JSON.stringify({
                           </div>
 
                           <div className="creator-list">
-                            {creators.map((creator) => {
+                            {availableCreators.map((creator) => {
                               const isSelected =
                                 selectedCreator?.handle === creator.handle;
 
@@ -2062,21 +2110,31 @@ body: JSON.stringify({
                                     setCreatorPickerOpen(false);
                                   }}
                                 >
-<img
-  className="creator-list-avatar"
-  src={creator.image}
-  alt={creator.handle}
-  draggable={false}
-/>
+{creator.image ? (
+  <img
+    className="creator-list-avatar"
+    src={creator.image}
+    alt={creator.handle}
+    draggable={false}
+  />
+) : (
+  <span
+    className="creator-list-avatar"
+    aria-hidden="true"
+  />
+)}
 
-                                  <div className="creator-list-copy">
-                                    <div>{creator.handle}</div>
-                                    <p>{creator.subtitle}</p>
-                                  </div>
+<div className="creator-list-copy">
+  <div>{creator.handle}</div>
 
-                                  <span>
-                                    {isSelected ? "Selected" : "Choose"}
-                                  </span>
+  {creator.subtitle && (
+    <p>{creator.subtitle}</p>
+  )}
+</div>
+
+<span className="creator-list-action">
+  {isSelected ? "Selected" : "Choose"}
+</span>
                                 </button>
                               );
                             })}
@@ -4752,14 +4810,18 @@ flex-shrink: 0;
           font-weight: 700;
         }
 
-        .creator-list-item span {
-          color: #000000;
-          font-size: 16px;
-          font-weight: 900;
-          border-radius: 999px;
-          background: #ffffff;
-          padding: 10px 14px;
-        }
+.creator-list-action {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 900;
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 10px 14px;
+}
+
+.creator-list-item.is-selected .creator-list-action {
+  background: #cbe534;
+}
 
         .creator-list-item.is-selected span {
           background: #cbe534;
@@ -9053,10 +9115,10 @@ top: max(
     line-height: 1.2 !important;
   }
 
-  .recipient-page .creator-list-item span {
-    padding: 2vw 2.5vw !important;
-    font-size: 2.6vw !important;
-  }
+.recipient-page .creator-list-action {
+  padding: 2vw 2.5vw !important;
+  font-size: 2.6vw !important;
+}
 
   /* Myself and creator delivery notice */
 

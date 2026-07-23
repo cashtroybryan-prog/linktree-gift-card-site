@@ -3,6 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { createClient } from "@/lib/supabase/client";
+
 type BrowserCard = {
   id: string;
   title: string;
@@ -495,9 +497,45 @@ initialRecipientType = "creator",
   initialUploadedMediaName = "",
   initialPersonalMessage = "",
 }: GiftSiteProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const hasMountedRouteAnimationRef = useRef(false);
+const router = useRouter();
+const pathname = usePathname();
+const hasMountedRouteAnimationRef = useRef(false);
+
+const [isSignedIn, setIsSignedIn] = useState(false);
+const [authReady, setAuthReady] = useState(false);
+const [isSigningOut, setIsSigningOut] = useState(false);
+
+useEffect(() => {
+  const supabase = createClient();
+  let isMounted = true;
+
+  const loadSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!isMounted) return;
+
+    setIsSignedIn(Boolean(session));
+    setAuthReady(true);
+  };
+
+  void loadSession();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!isMounted) return;
+
+    setIsSignedIn(Boolean(session));
+    setAuthReady(true);
+  });
+
+  return () => {
+    isMounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
 
   const navigateTo = (url: string) => {
     router.push(url);
@@ -703,10 +741,14 @@ setCreatorPickerOpen(
 
   const selectedCountrySlug = selectedCountry.code.toLowerCase();
 
-  const homePath = `/${selectedCountrySlug}/home`;
-  const shopPath = `/${selectedCountrySlug}/shop`;
-  const howPath = `/${selectedCountrySlug}/how-it-works`;
-  const trackerPath = `/${selectedCountrySlug}/gift-tracker`;
+const homePath = `/${selectedCountrySlug}/home`;
+const shopPath = `/${selectedCountrySlug}/shop`;
+const howPath = `/${selectedCountrySlug}/how-it-works`;
+const trackerPath = `/${selectedCountrySlug}/gift-tracker`;
+const loginPath = `/${selectedCountrySlug}/login`;
+const signupPath = `/${selectedCountrySlug}/signup`;
+const walletPath = `/${selectedCountrySlug}/wallet`;
+
 
  const getCountryPath = (country: Country) => {
   const countrySlug = country.code.toLowerCase();
@@ -1142,7 +1184,37 @@ const goToGiftTracker = () => {
   const goHome = () => {
     navigateTo(homePath);
   };
+const handleSignOut = async () => {
+  if (isSigningOut) return;
 
+  setIsSigningOut(true);
+  setMobileMenuOpen(false);
+
+  const supabase = createClient();
+
+  const [{ error }] = await Promise.all([
+    supabase.auth.signOut(),
+    new Promise<void>((resolve) => {
+      window.setTimeout(resolve, 900);
+    }),
+  ]);
+
+  if (error) {
+    console.error("Sign out failed:", error);
+    setIsSigningOut(false);
+    alert("Could not sign you out. Please try again.");
+    return;
+  }
+
+  setIsSignedIn(false);
+
+  router.push(homePath);
+  router.refresh();
+
+  window.setTimeout(() => {
+    setIsSigningOut(false);
+  }, 250);
+};
   const handleBrowserCardClick = (card: BrowserCard) => {
     goToProductPage(card);
   };
@@ -1202,22 +1274,27 @@ const handleRecipientBack = () => {
   navigateTo(`/${selectedCountrySlug}/product/${selectedProductCard.id}`);
 };
 
-  const handleFinalCTA = () => {
-    if (!recipientReady) return;
+const handleFinalCTA = async () => {
+  if (!recipientReady) return;
 
-    const amount = selectedAmountObject.value;
+  const amount = selectedAmountObject.value;
 
-    if (recipientType === "myself") {
-      navigateTo(
-        `/${selectedCountrySlug}/product/${selectedProductCard.id}/checkout?amount=${amount}&type=myself`
-      );
+  if (recipientType === "myself") {
+    if (authReady && isSignedIn) {
+      await handleCheckoutSubmit();
       return;
     }
 
     navigateTo(
-      `/${selectedCountrySlug}/product/${selectedProductCard.id}/personalize/${recipientType}?amount=${amount}${creatorQueryParam}${recipientQueryParam}`
+      `/${selectedCountrySlug}/product/${selectedProductCard.id}/checkout?amount=${amount}&type=myself`
     );
-  };
+    return;
+  }
+
+  navigateTo(
+    `/${selectedCountrySlug}/product/${selectedProductCard.id}/personalize/${recipientType}?amount=${amount}${creatorQueryParam}${recipientQueryParam}`
+  );
+};
 
   const handlePersonalizeContinue = () => {
     if (!personalizeCanContinue) return;
@@ -1229,8 +1306,12 @@ const handleRecipientBack = () => {
 
   const isCheckoutView =
   activePage === "product" && productStep === "checkout";
-const handleCheckoutSubmit = async () => {
-  if (!checkoutReady) return;
+async function handleCheckoutSubmit() {
+  const canSubmit =
+    checkoutReady ||
+    (recipientType === "myself" && authReady && isSignedIn);
+
+  if (!canSubmit) return;
 
   try {
     const response = await fetch("/api/create-checkout-session", {
@@ -1254,6 +1335,7 @@ body: JSON.stringify({
                   ? "cad"
                   : "usd",
         country: selectedCountry.label,
+        countryCode: selectedCountrySlug,
 productId:
   selectedProductCard.checkoutProductId ??
   selectedProductCard.id,
@@ -1280,7 +1362,7 @@ productTitle: selectedProductCard.fullTitle,
     console.error("Checkout submit failed:", error);
     alert("Something went wrong starting checkout.");
   }
-};
+}
 
   return (
 <main
@@ -1299,6 +1381,22 @@ productTitle: selectedProductCard.fullTitle,
   }`}
 >
 
+{isSigningOut && (
+  <div
+    className="signout-loading-overlay"
+    role="status"
+    aria-live="polite"
+  >
+    <div className="signout-loading-content">
+      <div
+        className="signout-loading-spinner"
+        aria-hidden="true"
+      />
+
+      <p>Signing out...</p>
+    </div>
+  </div>
+)}
 
       {activePage !== "product" && (
         <header
@@ -1344,24 +1442,52 @@ productTitle: selectedProductCard.fullTitle,
       Gift Tracker
     </button>
 
-    <button
-      type="button"
-      onClick={() => {
-        setMobileMenuOpen(false);
-      }}
-    >
-      Log in
-    </button>
+{authReady &&
+  (isSignedIn ? (
+    <>
+      <button
+        type="button"
+        onClick={handleSignOut}
+        disabled={isSigningOut}
+      >
+        Sign out
+      </button>
 
-    <button
-      type="button"
-      className="mobile-signup-menu-button"
-      onClick={() => {
-        setMobileMenuOpen(false);
-      }}
-    >
-      Sign up free
-    </button>
+      <button
+        type="button"
+        className="mobile-signup-menu-button"
+        onClick={() => {
+          setMobileMenuOpen(false);
+          navigateTo(walletPath);
+        }}
+      >
+        View Wallet
+      </button>
+    </>
+          ) : (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              navigateTo(loginPath);
+            }}
+          >
+            Log in
+          </button>
+
+          <button
+            type="button"
+            className="mobile-signup-menu-button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              navigateTo(signupPath);
+            }}
+          >
+            Sign up free
+          </button>
+        </>
+      ))}
   </div>
 )}
 <a
@@ -1453,14 +1579,46 @@ productTitle: selectedProductCard.fullTitle,
               )}
             </div>
 
-            <button className="login-button" type="button">
-              Log in
-            </button>
+{authReady &&
+  (isSignedIn ? (
+<>
+<button
+  className="login-button"
+  type="button"
+  onClick={handleSignOut}
+  disabled={isSigningOut}
+>
+  Sign out
+</button>
 
-            <button className="signup-button" type="button">
-              Sign up free
-            </button>
-          </nav>
+  <button
+    className="signup-button"
+    type="button"
+    onClick={() => navigateTo(walletPath)}
+  >
+    View Wallet
+  </button>
+</>
+  ) : (
+    <>
+      <button
+        className="login-button"
+        type="button"
+        onClick={() => navigateTo(loginPath)}
+      >
+        Log in
+      </button>
+
+      <button
+        className="signup-button"
+        type="button"
+        onClick={() => navigateTo(signupPath)}
+      >
+        Sign up free
+      </button>
+    </>
+  ))}
+            </nav>
         </header>
       )}
 
@@ -10780,6 +10938,57 @@ top: max(
     top: calc(
       var(--mobile-card-image-height) + 10.2vw
     ) !important;
+  }
+}
+  .signout-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: signoutOverlayIn 180ms ease both;
+}
+
+.signout-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.signout-loading-spinner {
+  width: 46px;
+  height: 46px;
+  border: 4px solid #ddddda;
+  border-top-color: #111111;
+  border-radius: 50%;
+  animation: signoutLoadingSpin 700ms linear infinite;
+}
+
+.signout-loading-content p {
+  margin: 0;
+  color: #111111;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+@keyframes signoutLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes signoutOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
       `}</style>

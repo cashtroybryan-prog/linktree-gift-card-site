@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -9,9 +10,31 @@ const allowedAmounts = [
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+const body = await request.json();
 
-    const amount = Number(body.amount);
+const supabase = await createClient();
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+const isSelfPurchase = body.recipientType === "myself";
+
+if (isSelfPurchase && !user?.email) {
+  return NextResponse.json(
+    { error: "Please log in before purchasing for yourself." },
+    { status: 401 },
+  );
+}
+
+const checkoutEmail =
+  isSelfPurchase && user?.email
+    ? user.email
+    : typeof body.checkoutEmail === "string"
+      ? body.checkoutEmail.trim()
+      : "";
+
+const amount = Number(body.amount);
 
     if (!allowedAmounts.includes(amount)) {
       return NextResponse.json(
@@ -20,12 +43,12 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!body.checkoutEmail) {
-      return NextResponse.json(
-        { error: "Checkout email is required." },
-        { status: 400 }
-      );
-    }
+if (!checkoutEmail) {
+  return NextResponse.json(
+    { error: "Checkout email is required." },
+    { status: 400 },
+  );
+}
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -41,7 +64,7 @@ const cancelUrl =
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      customer_email: body.checkoutEmail,
+      customer_email: checkoutEmail,
       line_items: [
         {
           price_data: {
@@ -59,8 +82,13 @@ const cancelUrl =
         productTitle: body.productTitle ?? "",
         amount: String(amount),
         country: body.country ?? "",
+        countryCode: body.countryCode ?? "us",
         recipientType: body.recipientType ?? "",
-        checkoutEmail: body.checkoutEmail ?? "",
+        checkoutEmail,
+purchaserUserId:
+  isSelfPurchase && user ? user.id : "",
+autoClaim:
+  isSelfPurchase && user ? "true" : "false",
         recipientName: body.recipientName ?? "",
         recipientEmail: body.recipientEmail ?? "",
         recipientPhone: body.recipientPhone ?? "",

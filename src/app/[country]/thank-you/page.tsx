@@ -76,6 +76,7 @@ export default function ThankYouPage() {
     order?.recipient_type === "someone" && order?.recipient_email
       ? order.recipient_email
       : order?.checkout_email || order?.customer_email || "your email";
+      const isSelfPurchase = order?.recipient_type === "myself";
 
   return (
     <main
@@ -237,8 +238,9 @@ export default function ThankYouPage() {
                 md:text-[20px]
               "
             >
-              Your payment was successful. Your gift card details will be sent
-              by email.
+{isSelfPurchase
+  ? "Your payment was successful. Your gift card has been added to your wallet."
+  : "Your payment was successful. Your gift card details will be sent by email."}
             </p>
 
             <div
@@ -343,80 +345,92 @@ export default function ThankYouPage() {
                   Delivery
                 </p>
 
-                <p
-                  className="
-                    mt-2
-                    text-[19px]
-                    leading-[1.08]
-                    font-black
-                    tracking-[-0.4px]
-                    text-black
-                    sm:text-[21px]
-                    md:text-[22px]
-                  "
-                >
-                  Your gift card code will be sent by email.
-                </p>
+<p
+  className="
+    mt-2
+    text-[19px]
+    leading-[1.08]
+    font-black
+    tracking-[-0.4px]
+    text-black
+    sm:text-[21px]
+    md:text-[22px]
+  "
+>
+  {isSelfPurchase
+    ? "Gift card is added to your wallet."
+    : "Your gift card will be delivered by email."}
+</p>
               </div>
 
-              <div
-                className="
-                  mt-5
-                  grid
-                  min-w-0
-                  gap-3
-                  text-[15px]
-                  leading-[1.3]
-                  font-bold
-                  text-[#555555]
-                  sm:text-[16px]
-                "
-              >
-                <p
-                  className="m-0 min-w-0"
-                  style={{
-                    overflowWrap: "anywhere",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  <span className="text-black">Delivery:</span>{" "}
-                  {deliveryEmail}
-                </p>
+<div
+  className="
+    mt-5
+    grid
+    min-w-0
+    gap-3
+    text-[15px]
+    leading-[1.3]
+    font-bold
+    text-[#555555]
+    sm:text-[16px]
+  "
+>
+  {!isSelfPurchase && (
+    <p
+      className="m-0 min-w-0"
+      style={{
+        overflowWrap: "anywhere",
+        wordBreak: "break-word",
+      }}
+    >
+      <span className="text-black">Delivery:</span>{" "}
+      {deliveryEmail}
+    </p>
+  )}
 
-                <p className="m-0">
-                  <span className="text-black">Status:</span>{" "}
-                  {order.fulfilment_status ?? "created"}
-                </p>
-              </div>
+  <p className="m-0">
+    <span className="text-black">Status:</span>{" "}
+    {isSelfPurchase
+      ? "Ready in your wallet"
+      : order.fulfilment_status ?? "created"}
+  </p>
+</div>
             </div>
           </>
         )}
 
-        <a
-          href={`/${country}/home`}
-          className="
-            mx-auto
-            mt-7
-            flex
-            h-[54px]
-            w-full
-            max-w-[250px]
-            items-center
-            justify-center
-            rounded-full
-            bg-black
-            px-8
-            text-[17px]
-            font-black
-            text-white
-            no-underline
-            sm:mt-9
-            sm:h-[58px]
-            sm:text-[18px]
-          "
-        >
-          Go home
-        </a>
+{!isLoading && (
+  <a
+    href={
+      order && isSelfPurchase
+        ? `/${country}/wallet`
+        : `/${country}/home`
+    }
+    className="
+      mx-auto
+      mt-7
+      flex
+      h-[54px]
+      w-full
+      max-w-[250px]
+      items-center
+      justify-center
+      rounded-full
+      bg-black
+      px-8
+      text-[17px]
+      font-black
+      text-white
+      no-underline
+      sm:mt-9
+      sm:h-[58px]
+      sm:text-[18px]
+    "
+  >
+    {order && isSelfPurchase ? "View wallet" : "Go home"}
+  </a>
+)}
       </div>
     </main>
   );

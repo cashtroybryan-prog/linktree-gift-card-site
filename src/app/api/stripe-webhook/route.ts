@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -12,6 +13,10 @@ const generateGiftCode = (productId?: string | null) => {
   const partTwo = Math.random().toString(36).slice(2, 6).toUpperCase();
 
   return `LINKTREE-${prefix}-${partOne}-${partTwo}`;
+};
+
+const generateClaimToken = () => {
+  return randomBytes(32).toString("hex");
 };
 
 const saveOrderToSupabase = async (
@@ -54,6 +59,8 @@ const sendGiftCardEmail = async (order: {
   product_title: string | null;
   gift_amount: string | null;
   currency: string | null;
+  country_code: string | null;
+  claim_token: string | null;
   checkout_email: string | null;
   customer_email: string | null;
   recipient_type: string | null;
@@ -62,7 +69,7 @@ const sendGiftCardEmail = async (order: {
   gift_code: string | null;
   personal_message: string | null;
 }) => {
-  const resendApiKey = process.env.RESEND_API_KEY;
+    const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
     throw new Error("Missing Resend API key.");
@@ -111,10 +118,20 @@ const sendGiftCardEmail = async (order: {
     ? `Someone has gifted you a ${giftValue} ${productTitle}.`
     : `Your ${giftValue} gift card has been created successfully.`;
 
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
-    /\/$/,
-    ""
-  );
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+).replace(/\/$/, "");
+
+const countryCode =
+  order.country_code?.trim().toLowerCase() || "us";
+
+if (!order.claim_token) {
+  throw new Error("Missing claim token.");
+}
+
+const claimPath = `/${countryCode}/claim/${order.claim_token}`;
+
+const claimUrl = `${siteUrl}${claimPath}`;
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 32px; color: #111111;">
@@ -130,10 +147,65 @@ const sendGiftCardEmail = async (order: {
           ${introCopy}
         </p>
 
-        <div style="background: #ffffff; border-radius: 18px; padding: 22px; margin: 22px 0;">
-          <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 900; color: #777777; margin: 0 0 8px;">Gift code</p>
-          <p style="font-size: 28px; line-height: 1.1; font-weight: 900; margin: 0; word-break: break-word;">${order.gift_code}</p>
-        </div>
+<div
+  style="
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 26px 22px;
+    margin: 22px 0;
+    text-align: center;
+  "
+>
+  <p
+    style="
+      margin: 0 0 18px;
+      color: #555555;
+      font-size: 15px;
+      line-height: 1.4;
+    "
+  >
+    Create or log in to your Linktree account to add this gift card
+    to your wallet.
+  </p>
+
+  <table
+    role="presentation"
+    cellspacing="0"
+    cellpadding="0"
+    border="0"
+    style="margin: 0 auto;"
+  >
+    <tr>
+      <td
+        align="center"
+        bgcolor="#cbea19"
+        style="
+          background: #cbea19;
+          border-radius: 999px;
+        "
+      >
+        <a
+          href="${claimUrl}"
+          target="_blank"
+          style="
+            display: inline-block;
+            padding: 17px 34px;
+            border-radius: 999px;
+            background: #cbea19;
+            color: #111111;
+            font-family: Arial, sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            line-height: 1;
+            text-decoration: none;
+          "
+        >
+          Claim your gift
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
 
         ${
           order.personal_message
@@ -148,7 +220,16 @@ const sendGiftCardEmail = async (order: {
     </div>
   `;
 
-  const text = `${heroTitle}\n\n${productTitle}\nValue: ${giftValue}\nGift code: ${order.gift_code}\n${order.personal_message ? `Message: ${order.personal_message}\n` : ""}`;
+const text =
+  `${heroTitle}\n\n` +
+  `${productTitle}\n` +
+  `Value: ${giftValue}\n\n` +
+  `Claim your gift: ${claimUrl}\n` +
+  `${
+    order.personal_message
+      ? `\nMessage: ${order.personal_message}\n`
+      : ""
+  }`;
 
   console.log("Sending gift card email to:", deliveryEmail);
 
@@ -203,8 +284,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true });
     }
 
-    const productId = session.metadata?.productId ?? null;
-    const giftCode = generateGiftCode(productId);
+const productId = session.metadata?.productId ?? null;
+const giftCode = generateGiftCode(productId);
+const claimToken = generateClaimToken();
+
+const autoClaim =
+  session.metadata?.autoClaim === "true";
+
+const purchaserUserId =
+  session.metadata?.purchaserUserId?.trim() || null;
+
+const shouldAutoClaim =
+  autoClaim && Boolean(purchaserUserId);
+
+const claimedAt = shouldAutoClaim
+  ? new Date().toISOString()
+  : null;
 
     const order = {
       stripe_session_id: session.id,
@@ -215,8 +310,10 @@ export async function POST(request: Request) {
       product_id: productId,
       product_title: session.metadata?.productTitle ?? null,
       gift_amount: session.metadata?.amount ?? null,
-      country: session.metadata?.country ?? null,
-      recipient_type: session.metadata?.recipientType ?? null,
+country: session.metadata?.country ?? null,
+country_code: session.metadata?.countryCode ?? "us",
+claim_token: claimToken,
+recipient_type: session.metadata?.recipientType ?? null,
       checkout_email: session.metadata?.checkoutEmail ?? null,
       recipient_name: session.metadata?.recipientName ?? null,
       recipient_email: session.metadata?.recipientEmail ?? null,
@@ -224,16 +321,32 @@ export async function POST(request: Request) {
       creator_handle: session.metadata?.creatorHandle ?? null,
       personal_message: session.metadata?.personalMessage ?? null,
       gift_code: giftCode,
-      fulfilment_status: "created",
+claimed_by: shouldAutoClaim
+  ? purchaserUserId
+  : null,
+claimed_at: claimedAt,
+fulfilment_status: shouldAutoClaim
+  ? "claimed"
+  : "created",
     };
 
     const savedOrder = await saveOrderToSupabase(order);
 
     console.log("Order saved to Supabase:", savedOrder);
 
-    await sendGiftCardEmail(order);
+if (!shouldAutoClaim) {
+  await sendGiftCardEmail(order);
 
-    console.log("Gift card email triggered for order:", session.id);
+  console.log(
+    "Gift card email triggered for order:",
+    session.id,
+  );
+} else {
+  console.log(
+    "Self-purchase added directly to wallet. Gift email skipped:",
+    session.id,
+  );
+}
   }
 
   return NextResponse.json({ received: true });

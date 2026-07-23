@@ -1,3 +1,59 @@
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/b60b5cf113571e47217d4fffd51bd8ed.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/90fc7c5e1633bace7675c76b94f742eb.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/f1b774b595cc6c615b11d7299b2eda05.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/030bed0195cd98cd301bdd3e3a59f234.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/9d531e5a6699f77596117500c5d35c20.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Link Sans";
+  src: url("/font/c26c0c2ba8f7711fba5695569b82cb10.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+button,
+input,
+textarea,
+select {
+  font-family: "Link Sans", Arial, sans-serif;
+}
 @import "tailwindcss";
 
 :root {
@@ -23,4 +79,59 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+/* Authentication pages */
+
+@media (max-width: 768px) {
+  .auth-page {
+    min-height: 100dvh !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding:
+      max(72px, calc(env(safe-area-inset-top, 0px) + 40px))
+      16px
+      48px !important;
+  }
+
+  .auth-card {
+    width: 100% !important;
+    max-width: 420px !important;
+    margin: 0 auto !important;
+    padding: 30px !important;
+    border-radius: 24px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .auth-page {
+    padding-top:
+      max(48px, calc(env(safe-area-inset-top, 0px) + 26px)) !important;
+  }
+
+  .auth-card {
+    padding: 26px 24px !important;
+  }
+}
+html.signout-flash body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #ffffff;
+  pointer-events: none;
+  animation: signoutFlash 500ms ease-out forwards;
+}
+
+@keyframes signoutFlash {
+  0% {
+    opacity: 0;
+  }
+
+  28% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

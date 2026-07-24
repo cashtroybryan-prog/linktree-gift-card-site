@@ -1,5 +1,3 @@
-"use client";
-
 type LoadingOverlayProps = {
   message?: string;
 };
@@ -9,75 +7,67 @@ export default function LoadingOverlay({
 }: LoadingOverlayProps) {
   return (
     <div
-      className="global-loading-overlay"
       role="status"
       aria-live="polite"
       aria-label={message}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 999999,
+        width: "100%",
+        minHeight: "100svh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(255, 255, 255, 0.96)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        fontFamily:
+          '"Link Sans", Arial, Helvetica, sans-serif',
+      }}
     >
-      <div className="global-loading-content">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "18px",
+        }}
+      >
         <div
-          className="global-loading-spinner"
           aria-hidden="true"
+          style={{
+            boxSizing: "border-box",
+            width: "46px",
+            height: "46px",
+            flex: "0 0 46px",
+            border: "4px solid #ddddda",
+            borderTopColor: "#111111",
+            borderRadius: "50%",
+            animation:
+              "globalLoadingSpinner 700ms linear infinite",
+          }}
         />
 
-        <p>{message}</p>
+        <p
+          style={{
+            margin: 0,
+            color: "#111111",
+            fontSize: "17px",
+            fontWeight: 800,
+            lineHeight: 1.2,
+            textAlign: "center",
+          }}
+        >
+          {message}
+        </p>
       </div>
 
-      <style jsx>{`
-        .global-loading-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 999999;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255, 255, 255, 0.94);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          animation: loadingOverlayIn 180ms ease both;
-        }
-
-        .global-loading-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 18px;
-        }
-
-        .global-loading-spinner {
-          width: 46px;
-          height: 46px;
-          border: 4px solid #ddddda;
-          border-top-color: #111111;
-          border-radius: 50%;
-          animation: loadingSpinner 700ms linear infinite;
-        }
-
-        .global-loading-content p {
-          margin: 0;
-          color: #111111;
-          font-family:
-            "Link Sans",
-            Arial,
-            Helvetica,
-            sans-serif;
-          font-size: 17px;
-          font-weight: 800;
-        }
-
-        @keyframes loadingSpinner {
+      <style>{`
+        @keyframes globalLoadingSpinner {
           to {
             transform: rotate(360deg);
-          }
-        }
-
-        @keyframes loadingOverlayIn {
-          from {
-            opacity: 0;
-          }
-
-          to {
-            opacity: 1;
           }
         }
       `}</style>

@@ -78,7 +78,15 @@ export default function ThankYouPage() {
     order?.recipient_type === "someone" && order?.recipient_email
       ? order.recipient_email
       : order?.checkout_email || order?.customer_email || "your email";
-      const isSelfPurchase = order?.recipient_type === "myself";
+  const isSelfPurchase =
+    order?.recipient_type === "myself";
+
+  const isWalletReady =
+    isSelfPurchase &&
+    order?.fulfilment_status === "claimed";
+
+  const isGuestSelfPurchase =
+    isSelfPurchase && !isWalletReady;
 
   return (
     <main
@@ -240,9 +248,11 @@ export default function ThankYouPage() {
                 md:text-[20px]
               "
             >
-{isSelfPurchase
+{isWalletReady
   ? "Your payment was successful. Your gift card has been added to your wallet."
-  : "Your payment was successful. Your gift card details will be sent by email."}
+  : isGuestSelfPurchase
+    ? "Your payment was successful. We’ve sent your gift card to your email so you can add it to your wallet."
+    : "Your payment was successful. Your gift card details will be sent by email."}
             </p>
 
             <div
@@ -359,9 +369,11 @@ export default function ThankYouPage() {
     md:text-[22px]
   "
 >
-  {isSelfPurchase
+  {isWalletReady
     ? "Gift card is added to your wallet."
-    : "Your gift card will be delivered by email."}
+    : isGuestSelfPurchase
+      ? "Check your email to claim your gift card."
+      : "Your gift card will be delivered by email."}
 </p>
               </div>
 
@@ -378,7 +390,7 @@ export default function ThankYouPage() {
     sm:text-[16px]
   "
 >
-  {!isSelfPurchase && (
+  {!isWalletReady && (
     <p
       className="m-0 min-w-0"
       style={{
@@ -393,9 +405,11 @@ export default function ThankYouPage() {
 
   <p className="m-0">
     <span className="text-black">Status:</span>{" "}
-    {isSelfPurchase
+    {isWalletReady
       ? "Ready in your wallet"
-      : order.fulfilment_status ?? "created"}
+      : isGuestSelfPurchase
+        ? "Claim link sent by email"
+        : order.fulfilment_status ?? "created"}
   </p>
 </div>
             </div>
@@ -405,7 +419,7 @@ export default function ThankYouPage() {
 {!isLoading && (
   <Link
     href={
-      order && isSelfPurchase
+      order && isWalletReady
         ? `/${country}/wallet`
         : `/${country}/home`
     }
@@ -430,7 +444,7 @@ export default function ThankYouPage() {
       sm:text-[18px]
     "
   >
-    {order && isSelfPurchase ? "View wallet" : "Go home"}
+    {order && isWalletReady ? "View wallet" : "Go home"}
   </Link>
 )}
       </div>

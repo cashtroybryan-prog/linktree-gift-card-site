@@ -20,13 +20,6 @@ const {
 
 const isSelfPurchase = body.recipientType === "myself";
 
-if (isSelfPurchase && !user?.email) {
-  return NextResponse.json(
-    { error: "Please log in before purchasing for yourself." },
-    { status: 401 },
-  );
-}
-
 const checkoutEmail =
   isSelfPurchase && user?.email
     ? user.email

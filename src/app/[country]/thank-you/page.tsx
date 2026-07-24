@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect, useState } from "react";
 
 type Order = {
@@ -401,7 +403,7 @@ export default function ThankYouPage() {
         )}
 
 {!isLoading && (
-  <a
+  <Link
     href={
       order && isSelfPurchase
         ? `/${country}/wallet`
@@ -429,7 +431,7 @@ export default function ThankYouPage() {
     "
   >
     {order && isSelfPurchase ? "View wallet" : "Go home"}
-  </a>
+  </Link>
 )}
       </div>
     </main>

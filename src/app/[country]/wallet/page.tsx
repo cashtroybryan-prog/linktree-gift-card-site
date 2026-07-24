@@ -329,20 +329,19 @@ export default async function WalletPage({
     formatClaimedDate(order.claimed_at);
 
   return (
-    <WalletCard
-      key={order.stripe_session_id}
-      stripeSessionId={
-        order.stripe_session_id
-      }
-      productTitle={productTitle}
-      productImage={productImage}
-      giftValue={giftValue}
-      giftCode={order.gift_code ?? ""}
-      claimedDate={claimedDate}
-      personalMessage={
-        order.personal_message
-      }
-    />
+<WalletCard
+  key={order.stripe_session_id}
+  stripeSessionId={
+    order.stripe_session_id
+  }
+  productId={order.product_id}
+  productTitle={productTitle}
+  productImage={productImage}
+  giftValue={giftValue}
+  giftCode={order.gift_code ?? ""}
+  claimedDate={claimedDate}
+  personalMessage={order.personal_message}
+/>
   );
 })}
           </section>

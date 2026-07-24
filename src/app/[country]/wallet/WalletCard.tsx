@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import Barcode from "react-barcode";
 
 type WalletCardProps = {
   stripeSessionId: string;
+  productId: string | null;
   productTitle: string;
   productImage: string;
   giftValue: string;
@@ -13,8 +15,20 @@ type WalletCardProps = {
   personalMessage: string | null;
 };
 
+const onlineOnlyProductIds = new Set([
+  "linktree",
+  "uber",
+  "ebay",
+  "airbnb",
+  "doordash",
+  "instacart",
+  "roblox",
+  "playstation",
+]);
+
 export default function WalletCard({
   stripeSessionId,
+  productId,
   productTitle,
   productImage,
   giftValue,
@@ -33,6 +47,15 @@ export default function WalletCard({
   const [removeConfirmOpen, setRemoveConfirmOpen] =
   useState(false);
   const [copied, setCopied] = useState(false);
+
+  const supportsOffline =
+  productId !== null &&
+  !onlineOnlyProductIds.has(productId);
+
+const [redemptionMode, setRedemptionMode] =
+  useState<"offline" | "online">(
+    supportsOffline ? "offline" : "online",
+  );
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -362,63 +385,140 @@ onClick={() => {
                 </div>
               </div>
 
-              <div className="lt-wallet-tabs">
-                <span className="is-active">
-                  Online
-                </span>
+<div
+  className={`lt-wallet-tabs ${
+    supportsOffline ? "" : "is-online-only"
+  }`}
+  role="tablist"
+  aria-label="Redemption method"
+>
+  {supportsOffline && (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={
+        redemptionMode === "offline"
+      }
+      className={
+        redemptionMode === "offline"
+          ? "is-active"
+          : ""
+      }
+      onClick={() =>
+        setRedemptionMode("offline")
+      }
+    >
+      Offline
+    </button>
+  )}
 
-                <span>Keep track</span>
-              </div>
+  <button
+    type="button"
+    role="tab"
+    aria-selected={
+      redemptionMode === "online"
+    }
+    className={
+      redemptionMode === "online"
+        ? "is-active"
+        : ""
+    }
+    onClick={() =>
+      setRedemptionMode("online")
+    }
+  >
+    Online
+  </button>
+</div>
 
               <div className="lt-wallet-code-section">
-                <p className="lt-wallet-field-label">
-                  PIN
-                </p>
+  {redemptionMode === "offline" &&
+  supportsOffline ? (
+    <>
+      <p className="lt-wallet-field-label">
+        Scan in store
+      </p>
 
-                <div className="lt-wallet-code-row">
-                  <strong>
-                    {giftCode || "Code unavailable"}
-                  </strong>
+      <div className="lt-wallet-barcode">
+        {giftCode ? (
+          <>
+            <Barcode
+              value={giftCode}
+              format="CODE128"
+              width={1.4}
+              height={66}
+              margin={0}
+              displayValue={false}
+              background="#ffffff"
+              lineColor="#111111"
+            />
 
-                  {giftCode && (
-                    <button
-                      type="button"
-                      onClick={handleCopy}
-                      aria-label="Copy gift card code"
-                    >
-                      {copied ? (
-                        <span className="lt-wallet-copied">
-                          ✓
-                        </span>
-                      ) : (
-                        <svg
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <rect
-                            x="8"
-                            y="8"
-                            width="11"
-                            height="11"
-                            rx="2"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
+            <strong>{giftCode}</strong>
 
-                          <path
-                            d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
+            <p>
+              Show this barcode when paying in
+              store.
+            </p>
+          </>
+        ) : (
+          <p className="lt-wallet-unavailable">
+            Barcode unavailable
+          </p>
+        )}
+      </div>
+    </>
+  ) : (
+    <>
+      <p className="lt-wallet-field-label">
+        Gift card code
+      </p>
+
+      <div className="lt-wallet-code-row">
+        <strong>
+          {giftCode || "Code unavailable"}
+        </strong>
+
+        {giftCode && (
+          <button
+            type="button"
+            onClick={handleCopy}
+            aria-label="Copy gift card code"
+          >
+            {copied ? (
+              <span className="lt-wallet-copied">
+                ✓
+              </span>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <rect
+                  x="8"
+                  y="8"
+                  width="11"
+                  height="11"
+                  rx="2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+
+                <path
+                  d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
+    </>
+  )}
+</div>
 
               {personalMessage && (
                 <div className="lt-wallet-message">
@@ -505,10 +605,11 @@ onClick={() => {
           overflow: visible;
         }
 
-        .lt-wallet-back {
-          transform: rotateY(180deg);
-          overflow: hidden;
-        }
+.lt-wallet-back {
+  display: flex;
+  transform: rotateY(180deg);
+  overflow: hidden;
+}
 
         .lt-wallet-image-wrap {
           width: 100%;
@@ -749,13 +850,15 @@ onClick={() => {
           background: #292929;
         }
 
-        .lt-wallet-back-content {
-          min-height: 448px;
-          padding: 25px 22px 20px;
-          display: flex;
-          flex-direction: column;
-        }
-
+.lt-wallet-back-content {
+  width: 100%;
+  min-height: 448px;
+  flex: 1;
+  padding: 25px 22px 20px;
+  display: flex;
+  flex-direction: column;
+}
+  
         .lt-wallet-back-heading {
           display: flex;
           align-items: flex-start;
@@ -804,25 +907,79 @@ onClick={() => {
           background: #f1f1ef;
         }
 
-        .lt-wallet-tabs span {
-          min-height: 39px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 999px;
-          color: #666666;
-          font-size: 13px;
-          font-weight: 700;
-        }
+.lt-wallet-tabs button {
+  min-height: 39px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #666666;
+  font-family:
+    "Link Sans",
+    Arial,
+    Helvetica,
+    sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-        .lt-wallet-tabs .is-active {
-          background: #cbea19;
-          color: #111111;
-        }
+.lt-wallet-tabs button.is-active {
+  background: #cbea19;
+  color: #111111;
+}
+
+.lt-wallet-tabs.is-online-only {
+  grid-template-columns: 1fr;
+}
 
         .lt-wallet-code-section {
           margin-top: 24px;
         }
+
+        .lt-wallet-barcode {
+  min-height: 146px;
+  padding: 19px 16px 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dededb;
+  border-radius: 14px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.lt-wallet-barcode :global(svg) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.lt-wallet-barcode strong {
+  margin-top: 11px;
+  color: #111111;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.lt-wallet-barcode p {
+  margin: 7px 0 0;
+  color: #666666;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.lt-wallet-unavailable {
+  margin: 0 !important;
+}
 
         .lt-wallet-field-label {
           margin: 0 0 7px;
@@ -871,12 +1028,18 @@ onClick={() => {
           height: 100%;
         }
 
-        .lt-wallet-copied {
-          color: #22451b;
-          font-size: 18px;
-          font-weight: 900;
-        }
-
+.lt-wallet-copied {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22451b;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+  
         .lt-wallet-message {
           margin-top: 18px;
           padding-top: 16px;
@@ -1136,7 +1299,7 @@ onClick={() => {
     font-size: 36px !important;
   }
 
-  .lt-wallet-tabs span,
+  .lt-wallet-tabs button,
   .lt-wallet-code-row strong,
   .lt-wallet-message p:last-child {
     font-size: 15px !important;
@@ -1147,12 +1310,15 @@ onClick={() => {
   }
 }
 @media (max-width: 768px) {
-  .lt-wallet-face,
-  .lt-wallet-front,
-  .lt-wallet-back {
-    box-shadow: none !important;
-    filter: none !important;
-  }
+.lt-wallet-face,
+.lt-wallet-front,
+.lt-wallet-back {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.07),
+    0 16px 34px rgba(0, 0, 0, 0.08)
+    !important;
+  filter: none !important;
+}
 
   .lt-wallet-front-content {
     padding: 20px 16px 16px;
@@ -1194,7 +1360,7 @@ onClick={() => {
   top: auto !important;
   transform: none !important;
 }
-  
+
   .lt-wallet-value {
     margin-top: 17px;
   }
@@ -1237,7 +1403,7 @@ onClick={() => {
     font-size: 32px !important;
   }
 
-  .lt-wallet-tabs span,
+  .lt-wallet-tabs button,
   .lt-wallet-code-row strong,
   .lt-wallet-message p:last-child {
     font-size: 14px !important;

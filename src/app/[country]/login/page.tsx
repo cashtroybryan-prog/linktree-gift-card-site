@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -21,6 +25,35 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState("");
+  const [isClaimingGift, setIsClaimingGift] =
+    useState(false);
+  const [authNextPath, setAuthNextPath] =
+    useState<string | null>(null);
+
+  useEffect(() => {
+    const requestedNext = new URLSearchParams(
+      window.location.search,
+    ).get("next");
+
+    const safeNext =
+      requestedNext &&
+      requestedNext.startsWith("/") &&
+      !requestedNext.startsWith("//")
+        ? requestedNext
+        : null;
+
+    setAuthNextPath(safeNext);
+
+    setIsClaimingGift(
+      Boolean(safeNext?.includes("/claim/")),
+    );
+  }, []);
+
+  const signupHref = authNextPath
+    ? `/${country}/signup?next=${encodeURIComponent(
+        authNextPath,
+      )}`
+    : `/${country}/signup`;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,10 +71,18 @@ export default function LoginPage() {
 
     const supabase = createClient();
 
+    window.dispatchEvent(
+      new CustomEvent("app-loading-start"),
+    );
+
     const { error } = await supabase.auth.signInWithPassword({
       email: normalizedEmail,
       password,
     });
+
+    window.dispatchEvent(
+      new Event("app-loading-stop"),
+    );
 
     if (error) {
       setStatus("error");
@@ -251,7 +292,7 @@ router.refresh();
         >
           Don’t have an account?{" "}
           <Link
-            href={`/${country}/signup`}
+            href={signupHref}
             style={{
               color: "#111111",
               fontWeight: 800,
@@ -262,7 +303,8 @@ router.refresh();
           </Link>
         </p>
 
-        <Link
+        {!isClaimingGift && (
+<Link
           href={`/${country}/home`}
           style={{
             display: "block",
@@ -276,6 +318,7 @@ router.refresh();
         >
           Back to home
         </Link>
+        )}
       </section>
     </main>
   );

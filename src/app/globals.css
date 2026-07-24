@@ -135,3 +135,16 @@ html.signout-flash body::after {
     opacity: 0;
   }
 }
+
+
+.claim-gift-card-line {
+  display: inline;
+  margin-left: 0.25em;
+}
+
+@media (max-width: 600px) {
+  .claim-gift-card-line {
+    display: block;
+    margin-left: 0;
+  }
+}

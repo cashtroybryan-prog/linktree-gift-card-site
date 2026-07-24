@@ -5,9 +5,11 @@ import {
   useEffect,
   useRef,
   useState,
+  useTransition,
 } from "react";
 
 import { createClient } from "@/lib/supabase/client";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const countries = [
   {
@@ -69,6 +71,9 @@ export default function WalletNav({
     useState(false);
   const [isSigningOut, setIsSigningOut] =
     useState(false);
+
+  const [isNavigating, startNavigation] =
+    useTransition();
 
     const [countryToast, setCountryToast] =
   useState<string | null>(null);
@@ -188,7 +193,9 @@ const navigateTo = (path: string) => {
   setCountryOpen(false);
   setMobileMenuOpen(false);
 
-  router.push(path);
+  startNavigation(() => {
+    router.push(path);
+  });
 };
 
 const triggerCountryToast = (
@@ -260,9 +267,11 @@ const handleCountryChange = (
     }),
   );
 
-  router.push(
-    `/${nextCountry.code.toLowerCase()}/wallet`,
-  );
+  startNavigation(() => {
+    router.push(
+      `/${nextCountry.code.toLowerCase()}/wallet`,
+    );
+  });
 };
 
   const handleSignOut = async () => {
@@ -302,21 +311,14 @@ const handleCountryChange = (
 
   return (
     <>
-      {isSigningOut && (
-        <div
-          className="signout-loading-overlay"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="signout-loading-content">
-            <div
-              className="signout-loading-spinner"
-              aria-hidden="true"
-            />
-
-            <p>Signing out...</p>
-          </div>
-        </div>
+      {(isSigningOut || isNavigating) && (
+        <LoadingOverlay
+          message={
+            isSigningOut
+              ? "Signing out..."
+              : "Loading..."
+          }
+        />
       )}
 
       {countryToast && (

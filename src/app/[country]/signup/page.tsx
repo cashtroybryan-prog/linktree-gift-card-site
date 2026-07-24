@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -23,6 +27,36 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 const [status, setStatus] = useState<FormStatus>("idle");
 const [message, setMessage] = useState("");
+const [isClaimingGift, setIsClaimingGift] =
+  useState(false);
+
+const [authNextPath, setAuthNextPath] =
+  useState<string | null>(null);
+
+  useEffect(() => {
+    const requestedNext = new URLSearchParams(
+      window.location.search,
+    ).get("next");
+
+    const safeNext =
+      requestedNext &&
+      requestedNext.startsWith("/") &&
+      !requestedNext.startsWith("//")
+        ? requestedNext
+        : null;
+
+    setAuthNextPath(safeNext);
+
+    setIsClaimingGift(
+      Boolean(safeNext?.includes("/claim/")),
+    );
+  }, []);
+
+  const loginHref = authNextPath
+    ? `/${country}/login?next=${encodeURIComponent(
+        authNextPath,
+      )}`
+    : `/${country}/login`;
 
 function getNextPath() {
   const requestedNext = new URLSearchParams(
@@ -77,6 +111,10 @@ const callbackUrl =
 
     const supabase = createClient();
 
+    window.dispatchEvent(
+      new CustomEvent("app-loading-start"),
+    );
+
     const { data, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
@@ -87,6 +125,26 @@ const callbackUrl =
         },
       },
     });
+
+    window.dispatchEvent(
+      new Event("app-loading-stop"),
+    );
+
+    const accountAlreadyExists =
+      error?.code === "user_already_exists" ||
+      error?.code === "email_exists" ||
+      error?.message
+        ?.toLowerCase()
+        .includes("already registered") ||
+      data.user?.identities?.length === 0;
+
+    if (accountAlreadyExists) {
+      setStatus("error");
+      setMessage(
+        "An account already exists with this email. Please log in instead.",
+      );
+      return;
+    }
 
     if (error) {
       setStatus("error");
@@ -203,6 +261,74 @@ const callbackUrl =
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+          <div
+            aria-disabled="true"
+            style={{
+              position: "relative",
+              width: "100%",
+              minHeight: "64px",
+              marginBottom: "24px",
+              padding: "0 24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              border: "2px solid #111111",
+              borderRadius: "999px",
+              background: "#ffffff",
+              color: "#111111",
+              fontSize: "16px",
+              fontWeight: 800,
+              cursor: "default",
+            }}
+          >
+            <span
+              aria-hidden="true"
+style={{
+  fontSize: "26px",
+  fontWeight: 900,
+  lineHeight: 1,
+}}
+            >
+              ✱
+            </span>
+
+            <span>
+              Continue with Linktree
+            </span>
+
+          </div>
+
+          <div
+            style={{
+              width: "100%",
+              margin: "0 0 25px",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              color: "#777777",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+          >
+            <span
+              style={{
+                height: "1px",
+                flex: 1,
+                background: "#dededb",
+              }}
+            />
+
+            <span>or sign up with email</span>
+
+            <span
+              style={{
+                height: "1px",
+                flex: 1,
+                background: "#dededb",
+              }}
+            />
+          </div>
             <label style={labelStyle} htmlFor="fullName">
               Full name
             </label>
@@ -327,9 +453,21 @@ const callbackUrl =
                 opacity: status === "loading" ? 0.65 : 1,
               }}
             >
-              {status === "loading"
-                ? "Creating account..."
-                : "Sign up free"}
+{status === "loading"
+  ? "Creating account..."
+  : isClaimingGift
+    ? (
+                  <>
+                    <span>
+                      Sign up to receive your
+                    </span>
+
+                    <span className="claim-gift-card-line">
+                      gift card!
+                    </span>
+                  </>
+                )
+    : "Sign up free"}
             </button>
           </form>
         )}
@@ -344,7 +482,7 @@ const callbackUrl =
         >
           Already have an account?{" "}
 <Link
-  href={`/${country}/login`}
+  href={loginHref}
   onClick={(event) => {
     event.preventDefault();
 
@@ -364,20 +502,22 @@ const callbackUrl =
 </Link>
         </p>
 
-        <Link
-          href={`/${country}/home`}
-          style={{
-            display: "block",
-            marginTop: "20px",
-            color: "#222222",
-            fontSize: "16px",
-            fontWeight: 600,
-            textAlign: "center",
-            textDecoration: "none",
-          }}
-        >
-          Back to home
-        </Link>
+{!isClaimingGift && (
+  <Link
+    href={`/${country}/home`}
+    style={{
+      display: "block",
+      marginTop: "20px",
+      color: "#222222",
+      fontSize: "16px",
+      fontWeight: 600,
+      textAlign: "center",
+      textDecoration: "none",
+    }}
+  >
+    Back to home
+  </Link>
+)}
       </section>
     </main>
   );

@@ -314,10 +314,12 @@ export default async function ClaimPage({
           </p>
 
           <Link
-            href={`/${safeCountry}/home`}
+            href={`/${country}/login?next=${encodeURIComponent(
+    `/${country}/claim/${token}`,
+  )}`}
             style={secondaryButtonStyle}
           >
-            Return home
+            Sign in again
           </Link>
         </section>
       </main>
@@ -374,7 +376,7 @@ export default async function ClaimPage({
               <div style={errorIconStyle}>!</div>
 
               <h1 style={titleStyle}>
-                This gift could not be claimed
+                You’ve already claimed this gift
               </h1>
 
               <p style={copyStyle}>
